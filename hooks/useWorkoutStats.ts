@@ -82,6 +82,7 @@ export function useWorkoutStats() {
 
       // Set the first exercise as selected if none is selected
       if (!selectedExercise && data.length > 0) {
+        // @ts-ignore
         const exercises = [...new Set(data.map((workout) => workout.exercise))]
         if (exercises.length > 0) {
           setSelectedExercise(exercises[0])

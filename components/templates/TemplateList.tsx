@@ -85,7 +85,7 @@ export function TemplateList() {
       <CardContent>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {templates.map((template) => {
-            const exercises = template.exercises as TemplateExercise[]
+            const exercises = template.exercises as unknown as TemplateExercise[]
             return (
               <Card key={template.id} className="overflow-hidden">
                 <CardHeader className="p-4">
