@@ -1,14 +1,14 @@
 "use client"
 
-import { useState } from "react"
 import { supabaseClient } from "@/lib/supabase/client"
 import type { WorkoutTemplate, WorkoutTemplateInsert, WorkoutTemplateUpdate } from "@/lib/supabase/types"
+import { useCallback, useState } from "react"
 
 export function useTemplates() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const getTemplates = async (userId: string) => {
+  const getTemplates = useCallback(async (userId: string) => {
     setLoading(true)
     setError(null)
 
@@ -28,9 +28,9 @@ export function useTemplates() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const getTemplate = async (id: string) => {
+  const getTemplate = useCallback(async (id: string) => {
     setLoading(true)
     setError(null)
 
@@ -46,9 +46,9 @@ export function useTemplates() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const createTemplate = async (template: WorkoutTemplateInsert) => {
+  const createTemplate = useCallback(async (template: WorkoutTemplateInsert) => {
     setLoading(true)
     setError(null)
 
@@ -64,9 +64,9 @@ export function useTemplates() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const updateTemplate = async (id: string, template: WorkoutTemplateUpdate) => {
+  const updateTemplate = useCallback(async (id: string, template: WorkoutTemplateUpdate) => {
     setLoading(true)
     setError(null)
 
@@ -87,9 +87,9 @@ export function useTemplates() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const deleteTemplate = async (id: string) => {
+  const deleteTemplate = useCallback(async (id: string) => {
     setLoading(true)
     setError(null)
 
@@ -105,7 +105,7 @@ export function useTemplates() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   return {
     loading,
