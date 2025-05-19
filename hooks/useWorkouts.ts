@@ -1,14 +1,14 @@
 "use client"
 
-import { useState } from "react"
 import { supabaseClient } from "@/lib/supabase/client"
 import type { Workout, WorkoutInsert, WorkoutUpdate } from "@/lib/supabase/types"
+import { useCallback, useState } from "react"
 
 export function useWorkouts() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const getWorkouts = async (userId: string, startDate?: string, endDate?: string) => {
+  const getWorkouts = useCallback(async (userId: string, startDate?: string, endDate?: string) => {
     setLoading(true)
     setError(null)
 
@@ -34,9 +34,9 @@ export function useWorkouts() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const getWorkout = async (id: string) => {
+  const getWorkout = useCallback(async (id: string) => {
     setLoading(true)
     setError(null)
 
@@ -53,9 +53,9 @@ export function useWorkouts() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const createWorkout = async (workout: WorkoutInsert) => {
+  const createWorkout = useCallback(async (workout: WorkoutInsert) => {
     setLoading(true)
     setError(null)
 
@@ -71,9 +71,9 @@ export function useWorkouts() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const updateWorkout = async (id: string, workout: WorkoutUpdate) => {
+  const updateWorkout = useCallback(async (id: string, workout: WorkoutUpdate) => {
     setLoading(true)
     setError(null)
 
@@ -89,9 +89,9 @@ export function useWorkouts() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const deleteWorkout = async (id: string) => {
+  const deleteWorkout = useCallback(async (id: string) => {
     setLoading(true)
     setError(null)
 
@@ -107,7 +107,7 @@ export function useWorkouts() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   return {
     loading,

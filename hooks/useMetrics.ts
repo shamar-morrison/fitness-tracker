@@ -1,14 +1,14 @@
 "use client"
 
-import { useState } from "react"
 import { supabaseClient } from "@/lib/supabase/client"
 import type { Metric, MetricInsert, MetricUpdate } from "@/lib/supabase/types"
+import { useCallback, useState } from "react"
 
 export function useMetrics() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const getMetrics = async (userId: string, startDate?: string, endDate?: string) => {
+  const getMetrics = useCallback(async (userId: string, startDate?: string, endDate?: string) => {
     setLoading(true)
     setError(null)
 
@@ -34,9 +34,9 @@ export function useMetrics() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const getMetric = async (id: string) => {
+  const getMetric = useCallback(async (id: string) => {
     setLoading(true)
     setError(null)
 
@@ -52,9 +52,9 @@ export function useMetrics() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const createMetric = async (metric: MetricInsert) => {
+  const createMetric = useCallback(async (metric: MetricInsert) => {
     setLoading(true)
     setError(null)
 
@@ -70,9 +70,9 @@ export function useMetrics() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const updateMetric = async (id: string, metric: MetricUpdate) => {
+  const updateMetric = useCallback(async (id: string, metric: MetricUpdate) => {
     setLoading(true)
     setError(null)
 
@@ -88,9 +88,9 @@ export function useMetrics() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const deleteMetric = async (id: string) => {
+  const deleteMetric = useCallback(async (id: string) => {
     setLoading(true)
     setError(null)
 
@@ -106,9 +106,9 @@ export function useMetrics() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const uploadPhoto = async (file: File, userId: string) => {
+  const uploadPhoto = useCallback(async (file: File, userId: string) => {
     setLoading(true)
     setError(null)
 
@@ -130,7 +130,7 @@ export function useMetrics() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   return {
     loading,
