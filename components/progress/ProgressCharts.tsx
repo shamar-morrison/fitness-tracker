@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useMetrics } from '@/hooks/useMetrics';
 import { useAuth } from '@/hooks/useAuth';
 import type { Metric } from '@/lib/supabase/types';
@@ -19,12 +19,12 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import {
+  CartesianGrid,
   Line,
   LineChart,
+  ResponsiveContainer,
   XAxis,
   YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
 } from 'recharts';
 
 export function ProgressCharts() {
@@ -128,12 +128,8 @@ export function ProgressCharts() {
   }
 
   return (
-    <Card>
+    <Card className={'pb-6'}>
       <CardHeader>
-        <CardTitle>Progress Tracking</CardTitle>
-        <CardDescription>
-          Track your weight and body fat percentage over time
-        </CardDescription>
         <div className="mt-2">
           <Tabs defaultValue="3m" onValueChange={setTimeRange}>
             <TabsList>
