@@ -32,16 +32,16 @@ export function ExerciseSelectDropdown({
   onExerciseSelect,
   selectedExerciseName,
 }: ExerciseSelectDropdownProps) {
-  const { categorizedExercises, loading, error, refetchExercises } = useExercises()
+  const { categorizedExercises, fetchLoading, error, refetchExercises } = useExercises()
   const [showCreateForm, setShowCreateForm] = useState(false)
 
-  const handleExerciseCreated = (newExercise: Exercise) => {
-    refetchExercises() // Refetch to include the new exercise in the dropdown
-    onExerciseSelect(newExercise.name) // Automatically select the newly created exercise
-    setShowCreateForm(false) // Close the dialog
+  const handleExerciseCreated = async (newExercise: Exercise) => {
+    await refetchExercises()
+    onExerciseSelect(newExercise.name)
+    setShowCreateForm(false)
   }
 
-  if (loading) return <p>Loading exercises...</p>
+  if (fetchLoading) return <p>Loading exercises...</p>
   if (error) return <p>Error loading exercises: {error}</p>
 
   return (

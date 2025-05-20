@@ -20,8 +20,8 @@ import { toast } from "sonner"
 import * as z from "zod"
 
 const exerciseSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  category: z.string().min(2, { message: "Category must be at least 2 characters." }),
+  name: z.string().trim().min(2, { message: "Name must be at least 2 characters." }),
+  category: z.string().trim().min(2, { message: "Category must be at least 2 characters." }),
   description: z.string().optional(),
   target_muscle_groups: z.string().optional(), // Input as comma-separated string
 })
@@ -82,12 +82,22 @@ export function CreateExerciseForm({ onExerciseCreated, setOpen }: CreateExercis
     toast.error("Invalid Form Data", {
       description: "Please correct the errors highlighted below before submitting.",
     })
-    // console.log("Form validation failed:", errors); 
   }
+
+  const handleCreateExerciseClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    const submitFn = form.handleSubmit(onValidSubmit, onInvalidSubmit);
+    submitFn(e).catch(error => {
+      console.error("Error during programmatic form submission:", error);
+      toast.error("Submission Error", {
+        description: "An unexpected error occurred while trying to submit the form."
+      });
+    });
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onValidSubmit, onInvalidSubmit)} className="space-y-4">
+      <div className="space-y-4">
         <FormField
           control={form.control}
           name="name"
@@ -146,11 +156,15 @@ export function CreateExerciseForm({ onExerciseCreated, setOpen }: CreateExercis
             </FormItem>
           )}
         />
-
-        <Button type="submit" disabled={createLoading || form.formState.isSubmitting}>
+        
+        <Button 
+          type="button"
+          onClick={handleCreateExerciseClick}
+          disabled={createLoading || form.formState.isSubmitting}
+        >
           {createLoading || form.formState.isSubmitting ? "Creating..." : "Create Exercise"}
         </Button>
-      </form>
+      </div>
     </Form>
   )
 } 
