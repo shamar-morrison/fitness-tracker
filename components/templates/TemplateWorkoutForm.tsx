@@ -2,26 +2,26 @@
 
 import type React from 'react';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useWorkouts } from '@/hooks/useWorkouts';
-import { useTemplates } from '@/hooks/useTemplates';
-import { useAuth } from '@/hooks/useAuth';
-import type { WorkoutInsert, TemplateExercise } from '@/lib/supabase/types';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useAuth } from '@/hooks/useAuth';
+import { useTemplates } from '@/hooks/useTemplates';
+import { useWorkouts } from '@/hooks/useWorkouts';
+import type { TemplateExercise, WorkoutInsert } from '@/lib/supabase/types';
 import { formatDateForInput } from '@/lib/utils/date-utils';
-import { Checkbox } from '@/components/ui/checkbox';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface TemplateWorkoutFormProps {
   templateId: string;
@@ -59,7 +59,7 @@ export function TemplateWorkoutForm({
         const template = await getTemplate(templateId);
 
         if (template) {
-          const templateExercises = template.exercises as TemplateExercise[];
+          const templateExercises = template.exercises as unknown as TemplateExercise[];
           setExercises(
             templateExercises.map((exercise) => ({
               ...exercise,
@@ -139,8 +139,12 @@ export function TemplateWorkoutForm({
         router.push('/workouts');
         router.refresh();
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     } finally {
       setSaving(false);
     }

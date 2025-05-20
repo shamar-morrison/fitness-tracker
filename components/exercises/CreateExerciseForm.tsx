@@ -18,8 +18,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   useForm,
   type ControllerRenderProps,
-  type FieldErrors,
-  type SubmitHandler,
+  type SubmitHandler
 } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
@@ -99,7 +98,7 @@ export function CreateExerciseForm({
     }
   };
 
-  const onInvalidSubmit = async (errors: FieldErrors<ExerciseFormValues>) => {
+  const onInvalidSubmit = async () => {
     toast.error('Invalid Form Data', {
       description:
         'Please correct the errors highlighted below before submitting.',

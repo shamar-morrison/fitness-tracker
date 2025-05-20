@@ -6,11 +6,11 @@ import { ExerciseSelectDropdown } from '@/components/exercises/ExerciseSelectDro
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,10 +18,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks/useAuth';
 import { useTemplates } from '@/hooks/useTemplates';
 import type {
-  Json,
-  TemplateExercise,
-  WorkoutTemplateInsert,
-  WorkoutTemplateUpdate,
+    Json,
+    TemplateExercise,
+    WorkoutTemplateInsert,
+    WorkoutTemplateUpdate,
 } from '@/lib/supabase/types';
 import { Plus, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -192,7 +192,7 @@ export function TemplateForm({ template, onSuccess }: TemplateFormProps) {
             {formData.exercises.length === 0 ? (
               <div className="rounded-md border border-dashed p-6 text-center">
                 <p className="text-sm text-muted-foreground">
-                  No exercises added yet. Click "Add Exercise" to begin.
+                  No exercises added yet. Click &quot;Add Exercise&quot; to begin.
                 </p>
               </div>
             ) : (

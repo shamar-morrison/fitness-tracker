@@ -1,26 +1,36 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { useTemplates } from '@/hooks/useTemplates';
-import { useAuth } from '@/hooks/useAuth';
 import { TemplateForm } from '@/components/templates/TemplateForm';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
+import { useTemplates } from '@/hooks/useTemplates';
+import type { TemplateExercise, WorkoutTemplateUpdate } from '@/lib/supabase/types';
 import { ArrowLeft } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function EditTemplatePage() {
   const { id } = useParams();
   const router = useRouter();
   const { user } = useAuth();
   const { getTemplate, loading } = useTemplates();
-  const [template, setTemplate] = useState(null);
+  const [template, setTemplate] = useState<
+    (WorkoutTemplateUpdate & { id: string; exercises: TemplateExercise[] }) | null
+  >(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchTemplate = async () => {
       if (user && id) {
         const data = await getTemplate(id as string);
-        setTemplate(data);
+        if (data) {
+          setTemplate({
+            ...(data as any),
+            exercises: data.exercises as unknown as TemplateExercise[],
+          } as (WorkoutTemplateUpdate & { id: string; exercises: TemplateExercise[] }));
+        } else {
+          setTemplate(null);
+        }
         setIsLoading(false);
       }
     };

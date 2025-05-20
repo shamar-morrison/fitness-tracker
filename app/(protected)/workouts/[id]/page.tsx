@@ -1,19 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { useWorkouts } from '@/hooks/useWorkouts';
-import { useAuth } from '@/hooks/useAuth';
-import { WorkoutForm } from '@/components/workouts/WorkoutForm';
 import { Button } from '@/components/ui/button';
+import { WorkoutForm } from '@/components/workouts/WorkoutForm';
+import { useAuth } from '@/hooks/useAuth';
+import { useWorkouts } from '@/hooks/useWorkouts';
+import type { WorkoutUpdate } from '@/lib/supabase/types';
 import { ArrowLeft } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function EditWorkoutPage() {
   const { id } = useParams();
   const router = useRouter();
   const { user } = useAuth();
   const { getWorkout, loading } = useWorkouts();
-  const [workout, setWorkout] = useState(null);
+  const [workout, setWorkout] = useState< (WorkoutUpdate & { id: string }) | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,7 +28,7 @@ export default function EditWorkoutPage() {
       try {
         setIsLoading(true);
         const data = await getWorkout(id as string);
-        setWorkout(data);
+        setWorkout(data as any);
       } catch (err) {
         console.error('Error fetching workout:', err);
         setError('Failed to load workout data');

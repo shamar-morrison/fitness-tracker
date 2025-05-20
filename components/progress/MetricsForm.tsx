@@ -2,23 +2,24 @@
 
 import type React from 'react';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useMetrics } from '@/hooks/useMetrics';
-import { useAuth } from '@/hooks/useAuth';
-import type { MetricInsert, MetricUpdate } from '@/lib/supabase/types';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useAuth } from '@/hooks/useAuth';
+import { useMetrics } from '@/hooks/useMetrics';
+import type { MetricInsert, MetricUpdate } from '@/lib/supabase/types';
 import { formatDateForInput } from '@/lib/utils/date-utils';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface MetricsFormProps {
   metric?: MetricUpdate & { id: string };
@@ -135,7 +136,7 @@ export function MetricsForm({ metric, onSuccess }: MetricsFormProps) {
                 type="number"
                 min="0"
                 step="0.1"
-                value={formData.weight === undefined ? '' : formData.weight}
+                value={formData.weight === undefined ? '' : String(formData.weight)}
                 onChange={handleChange}
                 placeholder="Enter your weight"
               />
@@ -150,7 +151,7 @@ export function MetricsForm({ metric, onSuccess }: MetricsFormProps) {
                 min="0"
                 max="100"
                 step="0.1"
-                value={formData.body_fat === undefined ? '' : formData.body_fat}
+                value={formData.body_fat === undefined ? '' : String(formData.body_fat)}
                 onChange={handleChange}
                 placeholder="Enter your body fat %"
               />
@@ -169,10 +170,12 @@ export function MetricsForm({ metric, onSuccess }: MetricsFormProps) {
             {formData.photo_url && (
               <div className="mt-2">
                 <p className="text-sm text-muted-foreground">Current photo:</p>
-                <img
+                <Image
                   src={formData.photo_url || '/placeholder.svg'}
                   alt="Progress"
-                  className="mt-1 h-40 rounded-md object-cover"
+                  width={213}
+                  height={160}
+                  className="mt-1 rounded-md object-cover"
                 />
               </div>
             )}

@@ -1,19 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useWorkouts } from '@/hooks/useWorkouts';
-import { useMetrics } from '@/hooks/useMetrics';
-import { useAuth } from '@/hooks/useAuth';
-import type { Workout } from '@/lib/supabase/types';
-import { getMonthRange } from '@/lib/utils/date-utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAuth } from '@/hooks/useAuth';
+import { useMetrics } from '@/hooks/useMetrics';
+import { useWorkouts } from '@/hooks/useWorkouts';
+import { getMonthRange } from '@/lib/utils/date-utils';
 import { Calendar, Dumbbell, Scale, TrendingUp } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export function MetricsDashboard() {
   const { user } = useAuth();
   const { getWorkouts } = useWorkouts();
   const { getMetrics } = useMetrics();
-  const [_, setWorkouts] = useState<Workout[]>([]);
   const [totalWorkouts, setTotalWorkouts] = useState(0);
   const [monthlyWorkouts, setMonthlyWorkouts] = useState(0);
   const [latestWeight, setLatestWeight] = useState<number | null>(null);
@@ -25,7 +23,6 @@ export function MetricsDashboard() {
       if (user) {
         // Get all workouts
         const workoutsData = await getWorkouts(user.id);
-        setWorkouts(workoutsData);
         setTotalWorkouts(workoutsData.length);
 
         // Get monthly workouts
