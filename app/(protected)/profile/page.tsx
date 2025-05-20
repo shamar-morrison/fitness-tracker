@@ -1,4 +1,4 @@
-import { ProfileForm } from "@/components/profile/ProfileForm"
+import { ProfileForm } from '@/components/profile/ProfileForm';
 
 export default function ProfilePage() {
   return (
@@ -8,5 +8,5 @@ export default function ProfilePage() {
       </div>
       <ProfileForm />
     </div>
-  )
+  );
 }

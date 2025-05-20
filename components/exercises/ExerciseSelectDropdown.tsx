@@ -1,57 +1,58 @@
-"use client"
+'use client';
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button';
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { CategorizedExercise, useExercises } from "@/hooks/useExercises"
-import type { Exercise } from "@/lib/supabase/types"
-import { PlusCircle } from "lucide-react"
-import { useState } from "react"
-import { CreateExerciseForm } from "./CreateExerciseForm"; // Import the form
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { CategorizedExercise, useExercises } from '@/hooks/useExercises';
+import type { Exercise } from '@/lib/supabase/types';
+import { PlusCircle } from 'lucide-react';
+import { useState } from 'react';
+import { CreateExerciseForm } from './CreateExerciseForm'; // Import the form
 
 interface ExerciseSelectDropdownProps {
-  onExerciseSelect: (exerciseName: string) => void // We pass the name, as current DB schema uses string
-  selectedExerciseName?: string | null
+  onExerciseSelect: (exerciseName: string) => void; // We pass the name, as current DB schema uses string
+  selectedExerciseName?: string | null;
 }
 
 export function ExerciseSelectDropdown({
   onExerciseSelect,
   selectedExerciseName,
 }: ExerciseSelectDropdownProps) {
-  const { categorizedExercises, fetchLoading, error, refetchExercises } = useExercises()
-  const [showCreateForm, setShowCreateForm] = useState(false)
+  const { categorizedExercises, fetchLoading, error, refetchExercises } =
+    useExercises();
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const handleExerciseCreated = async (newExercise: Exercise) => {
-    await refetchExercises()
-    onExerciseSelect(newExercise.name)
-    setShowCreateForm(false)
-  }
+    await refetchExercises();
+    onExerciseSelect(newExercise.name);
+    setShowCreateForm(false);
+  };
 
-  if (fetchLoading) return <p>Loading exercises...</p>
-  if (error) return <p>Error loading exercises: {error}</p>
+  if (fetchLoading) return <p>Loading exercises...</p>;
+  if (error) return <p>Error loading exercises: {error}</p>;
 
   return (
     <div className="flex items-center gap-2">
       <Select
         onValueChange={(value) => {
-          if (value === "__CREATE_NEW__") {
+          if (value === '__CREATE_NEW__') {
             // Handled by DialogTrigger
           } else {
-            onExerciseSelect(value)
+            onExerciseSelect(value);
           }
         }}
         value={selectedExerciseName || undefined}
@@ -83,12 +84,12 @@ export function ExerciseSelectDropdown({
           <DialogHeader>
             <DialogTitle>Create New Exercise</DialogTitle>
           </DialogHeader>
-          <CreateExerciseForm 
-            onExerciseCreated={handleExerciseCreated} 
-            setOpen={setShowCreateForm} 
+          <CreateExerciseForm
+            onExerciseCreated={handleExerciseCreated}
+            setOpen={setShowCreateForm}
           />
         </DialogContent>
       </Dialog>
     </div>
-  )
-} 
+  );
+}

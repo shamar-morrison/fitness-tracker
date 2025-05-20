@@ -1,10 +1,10 @@
-"use client"
+'use client';
 
-import { useParams } from "next/navigation"
-import { TemplateWorkoutForm } from "@/components/templates/TemplateWorkoutForm"
+import { useParams } from 'next/navigation';
+import { TemplateWorkoutForm } from '@/components/templates/TemplateWorkoutForm';
 
 export default function LogWorkoutFromTemplatePage() {
-  const { id } = useParams()
+  const { id } = useParams();
 
   return (
     <div className="space-y-6">
@@ -13,5 +13,5 @@ export default function LogWorkoutFromTemplatePage() {
       </div>
       <TemplateWorkoutForm templateId={id as string} />
     </div>
-  )
+  );
 }

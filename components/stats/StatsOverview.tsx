@@ -1,14 +1,14 @@
-"use client"
+'use client';
 
-import { ChartContainer, type ChartConfig } from "@/components/ui/chart"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useWorkoutStats, type TimeRange } from "@/hooks/useWorkoutStats"
-import { useEffect } from "react"
-import { ExerciseDistributionChart } from "./ExerciseDistributionChart"
-import { ExerciseProgressChart } from "./ExerciseProgressChart"
-import { PersonalRecordsTable } from "./PersonalRecordsTable"
-import { VolumeChart } from "./VolumeChart"
-import { WorkoutFrequencyChart } from "./WorkoutFrequencyChart"
+import { ChartContainer, type ChartConfig } from '@/components/ui/chart';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useWorkoutStats, type TimeRange } from '@/hooks/useWorkoutStats';
+import { useEffect } from 'react';
+import { ExerciseDistributionChart } from './ExerciseDistributionChart';
+import { ExerciseProgressChart } from './ExerciseProgressChart';
+import { PersonalRecordsTable } from './PersonalRecordsTable';
+import { VolumeChart } from './VolumeChart';
+import { WorkoutFrequencyChart } from './WorkoutFrequencyChart';
 
 // Placeholder chartConfig - populate this with actual configuration
 const chartConfig = {
@@ -38,27 +38,27 @@ export function StatsOverview() {
     setSelectedExercise,
     setTimeRange,
     fetchWorkouts,
-  } = useWorkoutStats()
+  } = useWorkoutStats();
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        await fetchWorkouts()
+        await fetchWorkouts();
       } catch (error) {
-        console.error("Error loading workout stats:", error)
+        console.error('Error loading workout stats:', error);
       }
-    }
+    };
 
-    loadData()
-  }, [timeRange, fetchWorkouts])
+    loadData();
+  }, [timeRange, fetchWorkouts]);
 
   const handleExerciseChange = (exercise: string) => {
-    setSelectedExercise(exercise)
-  }
+    setSelectedExercise(exercise);
+  };
 
   const handleTimeRangeChange = (value: string) => {
-    setTimeRange(value as TimeRange)
-  }
+    setTimeRange(value as TimeRange);
+  };
 
   return (
     <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
@@ -93,7 +93,11 @@ export function StatsOverview() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <VolumeChart key={`volume-${timeRange}`} volumeData={volumeData} isLoading={isLoading} />
+          <VolumeChart
+            key={`volume-${timeRange}`}
+            volumeData={volumeData}
+            isLoading={isLoading}
+          />
           <ExerciseDistributionChart
             key={`exercise-distribution-${timeRange}`}
             exerciseDistribution={exerciseDistribution}
@@ -108,5 +112,5 @@ export function StatsOverview() {
         />
       </div>
     </ChartContainer>
-  )
+  );
 }

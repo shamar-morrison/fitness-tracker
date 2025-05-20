@@ -1,16 +1,23 @@
-"use client"
+'use client';
 
-import type React from "react"
+import type React from 'react';
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/hooks/useAuth"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { supabaseClient } from "@/lib/supabase/client"
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { supabaseClient } from '@/lib/supabase/client';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,97 +28,105 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from '@/components/ui/alert-dialog';
 
 export function ProfileForm() {
-  const { user, signOut } = useAuth()
-  const [email, setEmail] = useState(user?.email || "")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const { user, signOut } = useAuth();
+  const [email, setEmail] = useState(user?.email || '');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleUpdateEmail = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError(null)
-    setSuccess(null)
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+    setSuccess(null);
 
     try {
-      const { error } = await supabaseClient.auth.updateUser({ email })
+      const { error } = await supabaseClient.auth.updateUser({ email });
 
       if (error) {
-        setError(error.message)
+        setError(error.message);
       } else {
-        setSuccess("Email updated successfully. Please check your new email for verification.")
+        setSuccess(
+          'Email updated successfully. Please check your new email for verification.',
+        );
       }
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError(null)
-    setSuccess(null)
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+    setSuccess(null);
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match")
-      setIsLoading(false)
-      return
+      setError('Passwords do not match');
+      setIsLoading(false);
+      return;
     }
 
     try {
-      const { error } = await supabaseClient.auth.updateUser({ password })
+      const { error } = await supabaseClient.auth.updateUser({ password });
 
       if (error) {
-        setError(error.message)
+        setError(error.message);
       } else {
-        setSuccess("Password updated successfully")
-        setPassword("")
-        setConfirmPassword("")
+        setSuccess('Password updated successfully');
+        setPassword('');
+        setConfirmPassword('');
       }
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleDeleteAccount = async () => {
-    setIsDeleting(true)
-    setError(null)
+    setIsDeleting(true);
+    setError(null);
 
     try {
       // Delete user data first
       if (user) {
         // Delete workouts
-        const { error: workoutsError } = await supabaseClient.from("workouts").delete().eq("user_id", user.id)
+        const { error: workoutsError } = await supabaseClient
+          .from('workouts')
+          .delete()
+          .eq('user_id', user.id);
 
-        if (workoutsError) throw workoutsError
+        if (workoutsError) throw workoutsError;
 
         // Delete metrics
-        const { error: metricsError } = await supabaseClient.from("metrics").delete().eq("user_id", user.id)
+        const { error: metricsError } = await supabaseClient
+          .from('metrics')
+          .delete()
+          .eq('user_id', user.id);
 
-        if (metricsError) throw metricsError
+        if (metricsError) throw metricsError;
 
         // Delete user account
         // Note: In a real app, you would need a server-side function to delete the user
         // as the client-side SDK doesn't support this operation
         // For this example, we'll just sign out
-        await signOut()
+        await signOut();
       }
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setIsDeleting(false)
+      setIsDeleting(false);
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -134,12 +149,18 @@ export function ProfileForm() {
             )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
           </CardContent>
           <CardFooter>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Updating..." : "Update Email"}
+              {isLoading ? 'Updating...' : 'Update Email'}
             </Button>
           </CardFooter>
         </form>
@@ -175,7 +196,7 @@ export function ProfileForm() {
           </CardContent>
           <CardFooter>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Updating..." : "Update Password"}
+              {isLoading ? 'Updating...' : 'Update Password'}
             </Button>
           </CardFooter>
         </form>
@@ -184,7 +205,9 @@ export function ProfileForm() {
       <Card>
         <CardHeader>
           <CardTitle>Danger Zone</CardTitle>
-          <CardDescription>Permanently delete your account and all your data</CardDescription>
+          <CardDescription>
+            Permanently delete your account and all your data
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <AlertDialog>
@@ -195,8 +218,8 @@ export function ProfileForm() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete your account and remove all your data from
-                  our servers.
+                  This action cannot be undone. This will permanently delete
+                  your account and remove all your data from our servers.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -206,7 +229,7 @@ export function ProfileForm() {
                   disabled={isDeleting}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
-                  {isDeleting ? "Deleting..." : "Delete Account"}
+                  {isDeleting ? 'Deleting...' : 'Delete Account'}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -214,5 +237,5 @@ export function ProfileForm() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

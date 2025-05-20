@@ -1,18 +1,34 @@
-"use client"
+'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { ExerciseProgress } from "@/hooks/useWorkoutStats"
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
-import { ChartLoader } from "./ChartLoader"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import type { ExerciseProgress } from '@/hooks/useWorkoutStats';
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
+import { ChartLoader } from './ChartLoader';
 
 interface ExerciseProgressChartProps {
-  exercises: string[]
-  selectedExercise: string | null
-  exerciseProgress: ExerciseProgress | null
-  onExerciseChange: (exercise: string) => void
-  isLoading: boolean
+  exercises: string[];
+  selectedExercise: string | null;
+  exerciseProgress: ExerciseProgress | null;
+  onExerciseChange: (exercise: string) => void;
+  isLoading: boolean;
 }
 
 export function ExerciseProgressChart({
@@ -27,13 +43,15 @@ export function ExerciseProgressChart({
       <Card>
         <CardHeader>
           <CardTitle>Exercise Progress</CardTitle>
-          <CardDescription>Track your progress for specific exercises over time</CardDescription>
+          <CardDescription>
+            Track your progress for specific exercises over time
+          </CardDescription>
         </CardHeader>
         <CardContent className="h-80">
           <ChartLoader />
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (exercises.length === 0) {
@@ -41,13 +59,17 @@ export function ExerciseProgressChart({
       <Card>
         <CardHeader>
           <CardTitle>Exercise Progress</CardTitle>
-          <CardDescription>Track your progress for specific exercises over time</CardDescription>
+          <CardDescription>
+            Track your progress for specific exercises over time
+          </CardDescription>
         </CardHeader>
         <CardContent className="flex h-80 items-center justify-center">
-          <p className="text-center text-muted-foreground">No workout data available to display progress.</p>
+          <p className="text-center text-muted-foreground">
+            No workout data available to display progress.
+          </p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   const chartData = exerciseProgress
@@ -56,7 +78,7 @@ export function ExerciseProgressChart({
         weight: exerciseProgress.weights[index],
         formattedDate: exerciseProgress.formattedDates[index],
       }))
-    : []
+    : [];
 
   return (
     <Card>
@@ -64,9 +86,14 @@ export function ExerciseProgressChart({
         <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
           <div>
             <CardTitle>Exercise Progress</CardTitle>
-            <CardDescription>Track your progress for specific exercises over time</CardDescription>
+            <CardDescription>
+              Track your progress for specific exercises over time
+            </CardDescription>
           </div>
-          <Select value={selectedExercise || ""} onValueChange={onExerciseChange}>
+          <Select
+            value={selectedExercise || ''}
+            onValueChange={onExerciseChange}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select exercise" />
             </SelectTrigger>
@@ -86,8 +113,8 @@ export function ExerciseProgressChart({
             <ChartContainer
               config={{
                 weight: {
-                  label: "Weight",
-                  color: "hsl(var(--chart-1))",
+                  label: 'Weight',
+                  color: 'hsl(var(--chart-1))',
                 },
               }}
             >
@@ -96,11 +123,19 @@ export function ExerciseProgressChart({
                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="formattedDate" tick={{ fontSize: 12 }} tickMargin={10} minTickGap={10} />
-                <YAxis domain={["auto", "auto"]} />
+                <XAxis
+                  dataKey="formattedDate"
+                  tick={{ fontSize: 12 }}
+                  tickMargin={10}
+                  minTickGap={10}
+                />
+                <YAxis domain={['auto', 'auto']} />
                 <ChartTooltip
                   content={
-                    <ChartTooltipContent labelFormatter={(value) => value} formatter={(value) => `${value} lbs`} />
+                    <ChartTooltipContent
+                      labelFormatter={(value) => value}
+                      formatter={(value) => `${value} lbs`}
+                    />
                   }
                 />
                 <Line
@@ -109,19 +144,21 @@ export function ExerciseProgressChart({
                   stroke="var(--color-weight)"
                   activeDot={{ r: 8 }}
                   strokeWidth={2}
-                  dot={{ strokeWidth: 2, r: 4, strokeDasharray: "" }}
+                  dot={{ strokeWidth: 2, r: 4, strokeDasharray: '' }}
                 />
               </LineChart>
             </ChartContainer>
           ) : (
             <div className="flex h-full items-center justify-center">
               <p className="text-center text-muted-foreground">
-                {selectedExercise ? `No data available for ${selectedExercise}` : "Select an exercise to view progress"}
+                {selectedExercise
+                  ? `No data available for ${selectedExercise}`
+                  : 'Select an exercise to view progress'}
               </p>
             </div>
           )}
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { MetricsForm } from "@/components/progress/MetricsForm"
+import { MetricsForm } from '@/components/progress/MetricsForm';
 
 export default function NewMetricsPage() {
   return (
@@ -8,5 +8,5 @@ export default function NewMetricsPage() {
       </div>
       <MetricsForm />
     </div>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { WorkoutForm } from "@/components/workouts/WorkoutForm"
+import { WorkoutForm } from '@/components/workouts/WorkoutForm';
 
 export default function NewWorkoutPage() {
   return (
@@ -8,5 +8,5 @@ export default function NewWorkoutPage() {
       </div>
       <WorkoutForm />
     </div>
-  )
+  );
 }

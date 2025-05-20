@@ -1,16 +1,29 @@
-"use client"
+'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import type { WorkoutFrequency } from "@/hooks/useWorkoutStats"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
+import type { WorkoutFrequency } from '@/hooks/useWorkoutStats';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 interface WorkoutFrequencyChartProps {
-  workoutFrequency: WorkoutFrequency[]
-  isLoading: boolean
+  workoutFrequency: WorkoutFrequency[];
+  isLoading: boolean;
 }
 
-export function WorkoutFrequencyChart({ workoutFrequency, isLoading }: WorkoutFrequencyChartProps) {
+export function WorkoutFrequencyChart({
+  workoutFrequency,
+  isLoading,
+}: WorkoutFrequencyChartProps) {
   if (isLoading) {
     return (
       <Card>
@@ -22,7 +35,7 @@ export function WorkoutFrequencyChart({ workoutFrequency, isLoading }: WorkoutFr
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-blue-500"></div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (workoutFrequency.length === 0) {
@@ -33,10 +46,12 @@ export function WorkoutFrequencyChart({ workoutFrequency, isLoading }: WorkoutFr
           <CardDescription>Number of workouts logged per day</CardDescription>
         </CardHeader>
         <CardContent className="flex h-80 items-center justify-center">
-          <p className="text-center text-muted-foreground">No workout data available to display frequency.</p>
+          <p className="text-center text-muted-foreground">
+            No workout data available to display frequency.
+          </p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -50,8 +65,8 @@ export function WorkoutFrequencyChart({ workoutFrequency, isLoading }: WorkoutFr
           <ChartContainer
             config={{
               count: {
-                label: "Workouts",
-                color: "hsl(var(--chart-2))",
+                label: 'Workouts',
+                color: 'hsl(var(--chart-2))',
               },
             }}
           >
@@ -60,13 +75,20 @@ export function WorkoutFrequencyChart({ workoutFrequency, isLoading }: WorkoutFr
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="formattedDate" tick={{ fontSize: 12 }} tickMargin={10} minTickGap={10} />
+              <XAxis
+                dataKey="formattedDate"
+                tick={{ fontSize: 12 }}
+                tickMargin={10}
+                minTickGap={10}
+              />
               <YAxis allowDecimals={false} />
               <ChartTooltip
                 content={
                   <ChartTooltipContent
                     labelFormatter={(value) => value}
-                    formatter={(value) => `${value} workout${value !== 1 ? "s" : ""}`}
+                    formatter={(value) =>
+                      `${value} workout${value !== 1 ? 's' : ''}`
+                    }
                   />
                 }
               />
@@ -84,5 +106,5 @@ export function WorkoutFrequencyChart({ workoutFrequency, isLoading }: WorkoutFr
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

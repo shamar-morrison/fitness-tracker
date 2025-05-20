@@ -1,50 +1,57 @@
-"use client"
+'use client';
 
-import { Button } from "@/components/ui/button"
-import { useAuth } from "@/contexts/AuthContext"
-import { cn } from "@/lib/utils"
-import { BarChart, Clipboard, Dumbbell, Home, LineChart, User } from "lucide-react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import { cn } from '@/lib/utils';
+import {
+  BarChart,
+  Clipboard,
+  Dumbbell,
+  Home,
+  LineChart,
+  User,
+} from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export function Sidebar() {
-  const pathname = usePathname()
-  const { user } = useAuth()
+  const pathname = usePathname();
+  const { user } = useAuth();
 
   const allRoutes = [
     {
-      href: "/dashboard",
-      label: "Dashboard",
+      href: '/dashboard',
+      label: 'Dashboard',
       icon: Home,
     },
     {
-      href: "/workouts",
-      label: "Workouts",
+      href: '/workouts',
+      label: 'Workouts',
       icon: Dumbbell,
     },
     {
-      href: "/templates",
-      label: "Templates",
+      href: '/templates',
+      label: 'Templates',
       icon: Clipboard,
     },
     {
-      href: "/progress",
-      label: "Progress",
+      href: '/progress',
+      label: 'Progress',
       icon: BarChart,
     },
     {
-      href: "/stats",
-      label: "Statistics",
+      href: '/stats',
+      label: 'Statistics',
       icon: LineChart,
     },
     {
-      href: "/profile",
-      label: "Profile",
+      href: '/profile',
+      label: 'Profile',
       icon: User,
     },
-  ]
+  ];
 
-  const routesToShow = user ? allRoutes : []
+  const routesToShow = user ? allRoutes : [];
 
   return (
     <div className="flex h-full flex-col gap-2 p-4">
@@ -59,12 +66,12 @@ export function Sidebar() {
             {routesToShow.map((route) => (
               <Button
                 key={route.href}
-                variant={pathname === route.href ? "secondary" : "ghost"}
+                variant={pathname === route.href ? 'secondary' : 'ghost'}
                 className={cn(
-                  "flex h-10 items-center justify-start gap-2 px-4 text-sm font-medium",
+                  'flex h-10 items-center justify-start gap-2 px-4 text-sm font-medium',
                   pathname === route.href
-                    ? "bg-secondary text-secondary-foreground"
-                    : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground",
+                    ? 'bg-secondary text-secondary-foreground'
+                    : 'text-muted-foreground hover:bg-secondary hover:text-secondary-foreground',
                 )}
                 asChild
               >
@@ -78,5 +85,5 @@ export function Sidebar() {
         )}
       </div>
     </div>
-  )
+  );
 }

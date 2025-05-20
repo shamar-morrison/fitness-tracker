@@ -1,19 +1,32 @@
-"use client"
+'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import type { ExerciseDistribution } from "@/hooks/useWorkoutStats"
-import { Cell, Legend, Pie, PieChart } from "recharts"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
+import type { ExerciseDistribution } from '@/hooks/useWorkoutStats';
+import { Cell, Legend, Pie, PieChart } from 'recharts';
 
 interface ExerciseDistributionChartProps {
-  exerciseDistribution: ExerciseDistribution[]
-  isLoading: boolean
+  exerciseDistribution: ExerciseDistribution[];
+  isLoading: boolean;
 }
 
 // editor_note: Added a basic chartConfig, can be expanded if specific colors per slice are managed via config
 const chartConfig = {};
 
-export function ExerciseDistributionChart({ exerciseDistribution, isLoading }: ExerciseDistributionChartProps) {
+export function ExerciseDistributionChart({
+  exerciseDistribution,
+  isLoading,
+}: ExerciseDistributionChartProps) {
   if (isLoading) {
     return (
       <Card>
@@ -25,7 +38,7 @@ export function ExerciseDistributionChart({ exerciseDistribution, isLoading }: E
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-blue-500"></div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (exerciseDistribution.length === 0) {
@@ -36,39 +49,45 @@ export function ExerciseDistributionChart({ exerciseDistribution, isLoading }: E
           <CardDescription>Breakdown of exercises performed</CardDescription>
         </CardHeader>
         <CardContent className="flex h-80 items-center justify-center">
-          <p className="text-center text-muted-foreground">No workout data available to display distribution.</p>
+          <p className="text-center text-muted-foreground">
+            No workout data available to display distribution.
+          </p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   // Limit to top 8 exercises for better visualization
-  const topExercises = exerciseDistribution.slice(0, 8)
+  const topExercises = exerciseDistribution.slice(0, 8);
 
   // If there are more than 8 exercises, group the rest as "Others"
   if (exerciseDistribution.length > 8) {
-    const othersCount = exerciseDistribution.slice(8).reduce((sum, item) => sum + item.count, 0)
-    const othersPercentage = exerciseDistribution.slice(8).reduce((sum, item) => sum + item.percentage, 0)
+    const othersCount = exerciseDistribution
+      .slice(8)
+      .reduce((sum, item) => sum + item.count, 0);
+    const othersPercentage = exerciseDistribution
+      .slice(8)
+      .reduce((sum, item) => sum + item.percentage, 0);
 
     topExercises.push({
-      exercise: "Others",
+      exercise: 'Others',
       count: othersCount,
       percentage: othersPercentage,
-    })
+    });
   }
 
   // Generate colors for the pie chart
   const COLORS = [
-    "#3b82f6", // blue-500
-    "#10b981", // emerald-500
-    "#f59e0b", // amber-500
-    "#ef4444", // red-500
-    "#8b5cf6", // violet-500
-    "#ec4899", // pink-500
-    "#06b6d4", // cyan-500
-    "#f97316", // orange-500
-    "#6b7280", // gray-500 (for Others)
-  ]
+    '#3b82f6', // blue-500
+    '#10b981', // emerald-500
+    '#f59e0b', // amber-500
+    '#ef4444', // red-500
+    '#8b5cf6', // violet-500
+    '#ec4899', // pink-500
+    '#06b6d4', // cyan-500
+    '#f97316', // orange-500
+    '#6b7280', // gray-500 (for Others)
+  ];
 
   return (
     <Card>
@@ -89,7 +108,9 @@ export function ExerciseDistributionChart({ exerciseDistribution, isLoading }: E
                 fill="#8884d8"
                 dataKey="count"
                 nameKey="exercise"
-                label={({ exercise, percentage }) => `${exercise} (${percentage.toFixed(1)}%)`}
+                label={({ exercise, percentage }) =>
+                  `${exercise} (${percentage.toFixed(1)}%)`
+                }
                 // Add animation properties to the pie
                 isAnimationActive={true}
                 animationBegin={0}
@@ -97,7 +118,10 @@ export function ExerciseDistributionChart({ exerciseDistribution, isLoading }: E
                 animationEasing="ease-in-out"
               >
                 {topExercises.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <ChartTooltip
@@ -105,8 +129,11 @@ export function ExerciseDistributionChart({ exerciseDistribution, isLoading }: E
                   <ChartTooltipContent
                     labelFormatter={(name) => name}
                     formatter={(value, name, props) => {
-                      const item = props.payload
-                      return [`${value} (${item.percentage.toFixed(1)}%)`, "Count"]
+                      const item = props.payload;
+                      return [
+                        `${value} (${item.percentage.toFixed(1)}%)`,
+                        'Count',
+                      ];
                     }}
                   />
                 }
@@ -120,5 +147,5 @@ export function ExerciseDistributionChart({ exerciseDistribution, isLoading }: E
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

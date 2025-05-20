@@ -1,4 +1,4 @@
-import { TemplateForm } from "@/components/templates/TemplateForm"
+import { TemplateForm } from '@/components/templates/TemplateForm';
 
 export default function NewTemplatePage() {
   return (
@@ -8,5 +8,5 @@ export default function NewTemplatePage() {
       </div>
       <TemplateForm />
     </div>
-  )
+  );
 }

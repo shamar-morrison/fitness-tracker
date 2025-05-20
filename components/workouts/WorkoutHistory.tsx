@@ -1,16 +1,34 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { useWorkouts } from "@/hooks/useWorkouts"
-import { useAuth } from "@/hooks/useAuth"
-import type { Workout } from "@/lib/supabase/types"
-import { formatDate } from "@/lib/utils/date-utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Edit, MoreVertical, Trash } from "lucide-react"
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useWorkouts } from '@/hooks/useWorkouts';
+import { useAuth } from '@/hooks/useAuth';
+import type { Workout } from '@/lib/supabase/types';
+import { formatDate } from '@/lib/utils/date-utils';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Edit, MoreVertical, Trash } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,39 +39,39 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from '@/components/ui/alert-dialog';
 
 export function WorkoutHistory() {
-  const { user } = useAuth()
-  const { getWorkouts, deleteWorkout } = useWorkouts()
-  const [workouts, setWorkouts] = useState<Workout[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const { user } = useAuth();
+  const { getWorkouts, deleteWorkout } = useWorkouts();
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchWorkouts = async () => {
       if (user) {
-        const data = await getWorkouts(user.id)
-        setWorkouts(data)
-        setIsLoading(false)
+        const data = await getWorkouts(user.id);
+        setWorkouts(data);
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchWorkouts()
-  }, [user, getWorkouts])
+    fetchWorkouts();
+  }, [user, getWorkouts]);
 
   const handleDelete = async (id: string) => {
-    const success = await deleteWorkout(id)
+    const success = await deleteWorkout(id);
     if (success) {
-      setWorkouts((prev) => prev.filter((workout) => workout.id !== id))
+      setWorkouts((prev) => prev.filter((workout) => workout.id !== id));
     }
-  }
+  };
 
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-blue-500"></div>
       </div>
-    )
+    );
   }
 
   if (workouts.length === 0) {
@@ -61,7 +79,9 @@ export function WorkoutHistory() {
       <Card>
         <CardHeader>
           <CardTitle>Workout History</CardTitle>
-          <CardDescription>You haven&apos;t logged any workouts yet.</CardDescription>
+          <CardDescription>
+            You haven&apos;t logged any workouts yet.
+          </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center py-6">
           <Button asChild>
@@ -69,20 +89,11 @@ export function WorkoutHistory() {
           </Button>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle>Workout History</CardTitle>
-          <CardDescription>View and manage your workout history</CardDescription>
-        </div>
-        <Button asChild>
-          <Link href="/workouts/new">Add Workout</Link>
-        </Button>
-      </CardHeader>
+    <Card className={'pt-6'}>
       <CardContent>
         <Table>
           <TableHeader>
@@ -99,10 +110,14 @@ export function WorkoutHistory() {
             {workouts.map((workout) => (
               <TableRow key={workout.id}>
                 <TableCell>{formatDate(workout.date)}</TableCell>
-                <TableCell className="font-medium">{workout.exercise}</TableCell>
+                <TableCell className="font-medium">
+                  {workout.exercise}
+                </TableCell>
                 <TableCell className="text-center">{workout.sets}</TableCell>
                 <TableCell className="text-center">{workout.reps}</TableCell>
-                <TableCell className="text-center">{workout.weight} lbs</TableCell>
+                <TableCell className="text-center">
+                  {workout.weight} lbs
+                </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -120,7 +135,9 @@ export function WorkoutHistory() {
                       </DropdownMenuItem>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                          <DropdownMenuItem
+                            onSelect={(e) => e.preventDefault()}
+                          >
                             <Trash className="mr-2 h-4 w-4" />
                             Delete
                           </DropdownMenuItem>
@@ -129,12 +146,17 @@ export function WorkoutHistory() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete this workout entry.
+                              This action cannot be undone. This will
+                              permanently delete this workout entry.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDelete(workout.id)}>Delete</AlertDialogAction>
+                            <AlertDialogAction
+                              onClick={() => handleDelete(workout.id)}
+                            >
+                              Delete
+                            </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
@@ -147,5 +169,5 @@ export function WorkoutHistory() {
         </Table>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,68 +1,111 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { useMetrics } from "@/hooks/useMetrics"
-import { useAuth } from "@/hooks/useAuth"
-import type { Metric } from "@/lib/supabase/types"
-import { formatDate } from "@/lib/utils/date-utils"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Line, LineChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts"
+import { useState, useEffect } from 'react';
+import { useMetrics } from '@/hooks/useMetrics';
+import { useAuth } from '@/hooks/useAuth';
+import type { Metric } from '@/lib/supabase/types';
+import { formatDate } from '@/lib/utils/date-utils';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
+import {
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+} from 'recharts';
 
 export function ProgressCharts() {
-  const { user } = useAuth()
-  const { getMetrics } = useMetrics()
-  const [metrics, setMetrics] = useState<Metric[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [timeRange, setTimeRange] = useState("3m") // 1m, 3m, 6m, 1y, all
+  const { user } = useAuth();
+  const { getMetrics } = useMetrics();
+  const [metrics, setMetrics] = useState<Metric[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState('3m'); // 1m, 3m, 6m, 1y, all
 
   useEffect(() => {
     const fetchMetrics = async () => {
       if (user) {
-        let startDate
-        const now = new Date()
+        let startDate;
+        const now = new Date();
 
         switch (timeRange) {
-          case "1m":
-            startDate = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()).toISOString().split("T")[0]
-            break
-          case "3m":
-            startDate = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate()).toISOString().split("T")[0]
-            break
-          case "6m":
-            startDate = new Date(now.getFullYear(), now.getMonth() - 6, now.getDate()).toISOString().split("T")[0]
-            break
-          case "1y":
-            startDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate()).toISOString().split("T")[0]
-            break
+          case '1m':
+            startDate = new Date(
+              now.getFullYear(),
+              now.getMonth() - 1,
+              now.getDate(),
+            )
+              .toISOString()
+              .split('T')[0];
+            break;
+          case '3m':
+            startDate = new Date(
+              now.getFullYear(),
+              now.getMonth() - 3,
+              now.getDate(),
+            )
+              .toISOString()
+              .split('T')[0];
+            break;
+          case '6m':
+            startDate = new Date(
+              now.getFullYear(),
+              now.getMonth() - 6,
+              now.getDate(),
+            )
+              .toISOString()
+              .split('T')[0];
+            break;
+          case '1y':
+            startDate = new Date(
+              now.getFullYear() - 1,
+              now.getMonth(),
+              now.getDate(),
+            )
+              .toISOString()
+              .split('T')[0];
+            break;
           default:
-            startDate = undefined
+            startDate = undefined;
         }
 
-        const data = await getMetrics(user.id, startDate)
+        const data = await getMetrics(user.id, startDate);
         // Sort by date ascending for charts
-        const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-        setMetrics(sortedData)
-        setIsLoading(false)
+        const sortedData = [...data].sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+        );
+        setMetrics(sortedData);
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchMetrics()
-  }, [user, getMetrics, timeRange])
+    fetchMetrics();
+  }, [user, getMetrics, timeRange]);
 
   const chartData = metrics.map((metric) => ({
     date: metric.date,
     weight: metric.weight,
     bodyFat: metric.body_fat,
-  }))
+  }));
 
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-blue-500"></div>
       </div>
-    )
+    );
   }
 
   if (metrics.length === 0) {
@@ -70,22 +113,27 @@ export function ProgressCharts() {
       <Card>
         <CardHeader>
           <CardTitle>Progress Tracking</CardTitle>
-          <CardDescription>You haven&apos;t logged any metrics yet.</CardDescription>
+          <CardDescription>
+            You haven&apos;t logged any metrics yet.
+          </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center py-6">
           <p className="text-center text-muted-foreground">
-            Start tracking your progress by adding your weight, body fat percentage, and progress photos.
+            Start tracking your progress by adding your weight, body fat
+            percentage, and progress photos.
           </p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Progress Tracking</CardTitle>
-        <CardDescription>Track your weight and body fat percentage over time</CardDescription>
+        <CardDescription>
+          Track your weight and body fat percentage over time
+        </CardDescription>
         <div className="mt-2">
           <Tabs defaultValue="3m" onValueChange={setTimeRange}>
             <TabsList>
@@ -105,17 +153,23 @@ export function ProgressCharts() {
             <ChartContainer
               config={{
                 weight: {
-                  label: "Weight",
-                  color: "hsl(var(--chart-1))",
+                  label: 'Weight',
+                  color: 'hsl(var(--chart-1))',
                 },
               }}
               className="h-full"
             >
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <LineChart
+                  data={chartData}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" tickFormatter={(value) => formatDate(value)} />
-                  <YAxis domain={["auto", "auto"]} />
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={(value) => formatDate(value)}
+                  />
+                  <YAxis domain={['auto', 'auto']} />
                   <ChartTooltip
                     content={
                       <ChartTooltipContent
@@ -124,7 +178,12 @@ export function ProgressCharts() {
                       />
                     }
                   />
-                  <Line type="monotone" dataKey="weight" stroke="var(--color-weight)" activeDot={{ r: 8 }} />
+                  <Line
+                    type="monotone"
+                    dataKey="weight"
+                    stroke="var(--color-weight)"
+                    activeDot={{ r: 8 }}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </ChartContainer>
@@ -135,17 +194,23 @@ export function ProgressCharts() {
             <ChartContainer
               config={{
                 bodyFat: {
-                  label: "Body Fat",
-                  color: "hsl(var(--chart-2))",
+                  label: 'Body Fat',
+                  color: 'hsl(var(--chart-2))',
                 },
               }}
               className="h-full"
             >
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <LineChart
+                  data={chartData}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" tickFormatter={(value) => formatDate(value)} />
-                  <YAxis domain={["auto", "auto"]} />
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={(value) => formatDate(value)}
+                  />
+                  <YAxis domain={['auto', 'auto']} />
                   <ChartTooltip
                     content={
                       <ChartTooltipContent
@@ -154,7 +219,12 @@ export function ProgressCharts() {
                       />
                     }
                   />
-                  <Line type="monotone" dataKey="bodyFat" stroke="var(--color-bodyFat)" activeDot={{ r: 8 }} />
+                  <Line
+                    type="monotone"
+                    dataKey="bodyFat"
+                    stroke="var(--color-bodyFat)"
+                    activeDot={{ r: 8 }}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </ChartContainer>
@@ -162,5 +232,5 @@ export function ProgressCharts() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

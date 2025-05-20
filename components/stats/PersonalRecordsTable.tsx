@@ -1,16 +1,32 @@
-"use client"
+'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Trophy } from "lucide-react"
-import type { PersonalRecord } from "@/hooks/useWorkoutStats"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Trophy } from 'lucide-react';
+import type { PersonalRecord } from '@/hooks/useWorkoutStats';
 
 interface PersonalRecordsTableProps {
-  personalRecords: PersonalRecord[]
-  isLoading: boolean
+  personalRecords: PersonalRecord[];
+  isLoading: boolean;
 }
 
-export function PersonalRecordsTable({ personalRecords, isLoading }: PersonalRecordsTableProps) {
+export function PersonalRecordsTable({
+  personalRecords,
+  isLoading,
+}: PersonalRecordsTableProps) {
   if (isLoading) {
     return (
       <Card>
@@ -22,7 +38,7 @@ export function PersonalRecordsTable({ personalRecords, isLoading }: PersonalRec
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-blue-500"></div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (personalRecords.length === 0) {
@@ -33,10 +49,12 @@ export function PersonalRecordsTable({ personalRecords, isLoading }: PersonalRec
           <CardDescription>Your best lifts for each exercise</CardDescription>
         </CardHeader>
         <CardContent className="flex h-80 items-center justify-center">
-          <p className="text-center text-muted-foreground">No workout data available to display personal records.</p>
+          <p className="text-center text-muted-foreground">
+            No workout data available to display personal records.
+          </p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -61,9 +79,15 @@ export function PersonalRecordsTable({ personalRecords, isLoading }: PersonalRec
             <TableBody>
               {personalRecords.map((record) => (
                 <TableRow key={record.exercise}>
-                  <TableCell className="font-medium">{record.exercise}</TableCell>
-                  <TableCell className="text-right">{record.weight} lbs</TableCell>
-                  <TableCell className="text-right">{record.formattedDate}</TableCell>
+                  <TableCell className="font-medium">
+                    {record.exercise}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {record.weight} lbs
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {record.formattedDate}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -71,5 +95,5 @@ export function PersonalRecordsTable({ personalRecords, isLoading }: PersonalRec
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

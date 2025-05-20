@@ -1,5 +1,5 @@
-import { MetricsDashboard } from "@/components/dashboard/MetricsDashboard"
-import { WorkoutSummary } from "@/components/dashboard/WorkoutSummary"
+import { MetricsDashboard } from '@/components/dashboard/MetricsDashboard';
+import { WorkoutSummary } from '@/components/dashboard/WorkoutSummary';
 
 export default function DashboardPage() {
   return (
@@ -10,5 +10,5 @@ export default function DashboardPage() {
       <MetricsDashboard />
       <WorkoutSummary />
     </div>
-  )
+  );
 }

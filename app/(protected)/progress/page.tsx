@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ProgressCharts } from "@/components/progress/ProgressCharts"
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ProgressCharts } from '@/components/progress/ProgressCharts';
 
 export default function ProgressPage() {
   return (
@@ -13,5 +13,5 @@ export default function ProgressPage() {
       </div>
       <ProgressCharts />
     </div>
-  )
+  );
 }

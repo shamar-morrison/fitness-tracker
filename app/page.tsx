@@ -1,11 +1,11 @@
-"use client"
+'use client';
 
-import { Button } from "@/components/ui/button"
-import { useAuth } from "@/contexts/AuthContext"
-import Link from "next/link"
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import Link from 'next/link';
 
 export default function Home() {
-  const { user, loading } = useAuth()
+  const { user, loading } = useAuth();
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -18,7 +18,8 @@ export default function Home() {
                   Track Your Fitness Journey
                 </h1>
                 <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl">
-                  Log workouts, track progress, and achieve your fitness goals with FitTrackr.
+                  Log workouts, track progress, and achieve your fitness goals
+                  with FitTrackr.
                 </p>
               </div>
               <div className="space-x-4">
@@ -45,11 +46,16 @@ export default function Home() {
           <div className="container px-4 md:px-6">
             <div className="mx-auto grid max-w-5xl items-center gap-6 lg:grid-cols-2 lg:gap-12">
               <div className="space-y-4">
-                <div className="inline-block rounded-lg bg-muted-foreground/10 px-3 py-1 text-sm">Track Workouts</div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Log Your Workouts</h2>
+                <div className="inline-block rounded-lg bg-muted-foreground/10 px-3 py-1 text-sm">
+                  Track Workouts
+                </div>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+                  Log Your Workouts
+                </h2>
                 <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Keep a detailed record of your exercises, sets, reps, and weights. Monitor your progress over time and
-                  identify areas for improvement.
+                  Keep a detailed record of your exercises, sets, reps, and
+                  weights. Monitor your progress over time and identify areas
+                  for improvement.
                 </p>
               </div>
               <div className="flex justify-center lg:justify-end">
@@ -65,11 +71,16 @@ export default function Home() {
                 <div className="h-[300px] w-[400px] rounded-xl bg-muted"></div>
               </div>
               <div className="space-y-4 lg:order-first">
-                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">Track Progress</div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Monitor Your Metrics</h2>
+                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">
+                  Track Progress
+                </div>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+                  Monitor Your Metrics
+                </h2>
                 <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Track your weight, body fat percentage, and other key metrics. Visualize your progress with intuitive
-                  charts and celebrate your achievements.
+                  Track your weight, body fat percentage, and other key metrics.
+                  Visualize your progress with intuitive charts and celebrate
+                  your achievements.
                 </p>
               </div>
             </div>
@@ -84,5 +95,5 @@ export default function Home() {
         </div>
       </footer>
     </div>
-  )
+  );
 }

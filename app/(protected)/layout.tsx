@@ -1,12 +1,12 @@
-import type React from "react"
+import type React from 'react';
 // import { Header } from "@/components/layout/Header"
-import { AuthWrapper } from "@/components/auth/AuthWrapper"
-import { Sidebar } from "@/components/layout/Sidebar"
+import { AuthWrapper } from '@/components/auth/AuthWrapper';
+import { Sidebar } from '@/components/layout/Sidebar';
 
 export default function ProtectedLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <AuthWrapper>
@@ -20,5 +20,5 @@ export default function ProtectedLayout({
         </div>
       </div>
     </AuthWrapper>
-  )
+  );
 }

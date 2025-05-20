@@ -1,50 +1,50 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { useWorkouts } from "@/hooks/useWorkouts"
-import { useAuth } from "@/hooks/useAuth"
-import { WorkoutForm } from "@/components/workouts/WorkoutForm"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useWorkouts } from '@/hooks/useWorkouts';
+import { useAuth } from '@/hooks/useAuth';
+import { WorkoutForm } from '@/components/workouts/WorkoutForm';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 export default function EditWorkoutPage() {
-  const { id } = useParams()
-  const router = useRouter()
-  const { user } = useAuth()
-  const { getWorkout, loading } = useWorkouts()
-  const [workout, setWorkout] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { id } = useParams();
+  const router = useRouter();
+  const { user } = useAuth();
+  const { getWorkout, loading } = useWorkouts();
+  const [workout, setWorkout] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchWorkout = async () => {
       if (!user || !id) {
-        setIsLoading(false)
-        return
+        setIsLoading(false);
+        return;
       }
 
       try {
-        setIsLoading(true)
-        const data = await getWorkout(id as string)
-        setWorkout(data)
+        setIsLoading(true);
+        const data = await getWorkout(id as string);
+        setWorkout(data);
       } catch (err) {
-        console.error("Error fetching workout:", err)
-        setError("Failed to load workout data")
+        console.error('Error fetching workout:', err);
+        setError('Failed to load workout data');
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchWorkout()
-  }, [user, id, getWorkout])
+    fetchWorkout();
+  }, [user, id, getWorkout]);
 
   if (isLoading || loading) {
     return (
       <div className="flex h-64 items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-blue-500"></div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -58,7 +58,7 @@ export default function EditWorkoutPage() {
         </div>
         <p>{error}</p>
       </div>
-    )
+    );
   }
 
   if (!workout) {
@@ -70,9 +70,12 @@ export default function EditWorkoutPage() {
           </Button>
           <h1 className="text-3xl font-bold">Workout Not Found</h1>
         </div>
-        <p>The workout you are looking for does not exist or you don&apos;t have permission to view it.</p>
+        <p>
+          The workout you are looking for does not exist or you don&apos;t have
+          permission to view it.
+        </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -85,5 +88,5 @@ export default function EditWorkoutPage() {
       </div>
       <WorkoutForm workout={workout} />
     </div>
-  )
+  );
 }
