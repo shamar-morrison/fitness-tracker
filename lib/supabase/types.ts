@@ -102,6 +102,41 @@ export interface Database {
           updated_at?: string
         }
       }
+      exercises: {
+        Row: {
+          id: string
+          name: string
+          category: string
+          description: string | null
+          target_muscle_groups: string[] | null
+          is_preset: boolean
+          user_id: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          category: string
+          description?: string | null
+          target_muscle_groups?: string[] | null
+          is_preset?: boolean
+          user_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          category?: string
+          description?: string | null
+          target_muscle_groups?: string[] | null
+          is_preset?: boolean
+          user_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
   }
 }
@@ -117,6 +152,10 @@ export type MetricUpdate = Database["public"]["Tables"]["metrics"]["Update"]
 export type WorkoutTemplate = Database["public"]["Tables"]["workout_templates"]["Row"]
 export type WorkoutTemplateInsert = Database["public"]["Tables"]["workout_templates"]["Insert"]
 export type WorkoutTemplateUpdate = Database["public"]["Tables"]["workout_templates"]["Update"]
+
+export type Exercise = Database["public"]["Tables"]["exercises"]["Row"]
+export type ExerciseInsert = Database["public"]["Tables"]["exercises"]["Insert"]
+export type ExerciseUpdate = Database["public"]["Tables"]["exercises"]["Update"]
 
 export interface TemplateExercise {
   exercise: string

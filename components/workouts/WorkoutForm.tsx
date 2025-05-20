@@ -2,19 +2,20 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useWorkouts } from "@/hooks/useWorkouts"
-import { useTemplates } from "@/hooks/useTemplates"
-import { useAuth } from "@/hooks/useAuth"
-import type { WorkoutInsert, WorkoutUpdate, TemplateExercise } from "@/lib/supabase/types"
+import { ExerciseSelectDropdown } from "@/components/exercises/ExerciseSelectDropdown"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useAuth } from "@/hooks/useAuth"
+import { useTemplates } from "@/hooks/useTemplates"
+import { useWorkouts } from "@/hooks/useWorkouts"
+import type { TemplateExercise, WorkoutInsert, WorkoutUpdate } from "@/lib/supabase/types"
 import { formatDateForInput } from "@/lib/utils/date-utils"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 
 interface WorkoutFormProps {
   workout?: WorkoutUpdate & { id: string }
@@ -49,7 +50,7 @@ export function WorkoutForm({ workout, onSuccess }: WorkoutFormProps) {
         if (template) {
           // If it's a new workout from a template, we'll use the first exercise
           // from the template to populate the form
-          const exercises = template.exercises as TemplateExercise[]
+          const exercises = template.exercises as unknown as TemplateExercise[]
           if (exercises && exercises.length > 0) {
             const firstExercise = exercises[0]
             setFormData((prev) => ({
@@ -75,6 +76,13 @@ export function WorkoutForm({ workout, onSuccess }: WorkoutFormProps) {
       ...prev,
       [name]:
         name === "sets" || name === "reps" || name === "weight" ? (value === "" ? 0 : Number.parseFloat(value)) : value,
+    }))
+  }
+
+  const handleExerciseSelect = (selectedExerciseName: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      exercise: selectedExerciseName,
     }))
   }
 
@@ -138,13 +146,9 @@ export function WorkoutForm({ workout, onSuccess }: WorkoutFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="exercise">Exercise</Label>
-            <Input
-              id="exercise"
-              name="exercise"
-              value={formData.exercise}
-              onChange={handleChange}
-              placeholder="e.g., Bench Press, Squat, etc."
-              required
+            <ExerciseSelectDropdown
+              selectedExerciseName={formData.exercise}
+              onExerciseSelect={handleExerciseSelect}
             />
           </div>
 

@@ -1,9 +1,9 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
-import { useRouter } from "next/navigation"
 import { supabaseClient } from "@/lib/supabase/client"
 import type { User } from "@supabase/supabase-js"
+import { useRouter } from "next/navigation"
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 
 type AuthContextType = {
   user: User | null
@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false)
 
       if (event === "SIGNED_IN") {
-        router.push("/dashboard")
+        // router.push("/dashboard"); // Prevent redirecting here as it causes issues on tab refocus
       }
     })
 

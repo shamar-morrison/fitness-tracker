@@ -2,22 +2,30 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useTemplates } from "@/hooks/useTemplates"
-import { useAuth } from "@/hooks/useAuth"
-import type { WorkoutTemplateInsert, WorkoutTemplateUpdate, TemplateExercise } from "@/lib/supabase/types"
+import { ExerciseSelectDropdown } from "@/components/exercises/ExerciseSelectDropdown"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useAuth } from "@/hooks/useAuth"
+import { useTemplates } from "@/hooks/useTemplates"
+import type { Json, TemplateExercise, WorkoutTemplateInsert, WorkoutTemplateUpdate } from "@/lib/supabase/types"
 import { Plus, Trash } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 interface TemplateFormProps {
   template?: WorkoutTemplateUpdate & { id: string; exercises: TemplateExercise[] }
   onSuccess?: () => void
+}
+
+interface TemplateFormData {
+  name: string
+  description: string | null
+  exercises: TemplateExercise[]
+  user_id?: string
 }
 
 export function TemplateForm({ template, onSuccess }: TemplateFormProps) {
@@ -25,9 +33,9 @@ export function TemplateForm({ template, onSuccess }: TemplateFormProps) {
   const { createTemplate, updateTemplate, loading, error } = useTemplates()
   const router = useRouter()
 
-  const [formData, setFormData] = useState<Partial<WorkoutTemplateInsert>>({
+  const [formData, setFormData] = useState<TemplateFormData>({
     name: template?.name || "",
-    description: template?.description || "",
+    description: template?.description || null,
     exercises: template?.exercises || [],
   })
 
@@ -40,7 +48,7 @@ export function TemplateForm({ template, onSuccess }: TemplateFormProps) {
   }
 
   const handleExerciseChange = (index: number, field: keyof TemplateExercise, value: string | number) => {
-    const exercises = [...(formData.exercises as TemplateExercise[])]
+    const exercises = [...formData.exercises]
     exercises[index] = {
       ...exercises[index],
       [field]: field === "exercise" || field === "notes" ? value : Number(value),
@@ -52,7 +60,7 @@ export function TemplateForm({ template, onSuccess }: TemplateFormProps) {
   }
 
   const addExercise = () => {
-    const exercises = [...((formData.exercises as TemplateExercise[]) || [])]
+    const exercises = [...formData.exercises]
     exercises.push({
       exercise: "",
       sets: 3,
@@ -67,7 +75,7 @@ export function TemplateForm({ template, onSuccess }: TemplateFormProps) {
   }
 
   const removeExercise = (index: number) => {
-    const exercises = [...(formData.exercises as TemplateExercise[])]
+    const exercises = [...formData.exercises]
     exercises.splice(index, 1)
     setFormData((prev) => ({
       ...prev,
@@ -80,12 +88,18 @@ export function TemplateForm({ template, onSuccess }: TemplateFormProps) {
 
     if (!user) return
 
+    const submissionData: WorkoutTemplateInsert | WorkoutTemplateUpdate = {
+      name: formData.name,
+      description: formData.description,
+      exercises: formData.exercises as unknown as Json,
+    }
+
     try {
       if (template?.id) {
-        await updateTemplate(template.id, formData as WorkoutTemplateUpdate)
+        await updateTemplate(template.id, submissionData as WorkoutTemplateUpdate)
       } else {
         await createTemplate({
-          ...(formData as WorkoutTemplateInsert),
+          ...(submissionData as WorkoutTemplateInsert),
           user_id: user.id,
         })
       }
@@ -146,25 +160,24 @@ export function TemplateForm({ template, onSuccess }: TemplateFormProps) {
               </Button>
             </div>
 
-            {((formData.exercises as TemplateExercise[]) || []).length === 0 ? (
+            {formData.exercises.length === 0 ? (
               <div className="rounded-md border border-dashed p-6 text-center">
                 <p className="text-sm text-muted-foreground">No exercises added yet. Click "Add Exercise" to begin.</p>
               </div>
             ) : (
               <div className="space-y-4">
-                {(formData.exercises as TemplateExercise[]).map((exercise, index) => (
+                {formData.exercises.map((exercise, index) => (
                   <Card key={index}>
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex-1 space-y-4">
                           <div className="space-y-2">
                             <Label htmlFor={`exercise-${index}`}>Exercise Name</Label>
-                            <Input
-                              id={`exercise-${index}`}
-                              value={exercise.exercise}
-                              onChange={(e) => handleExerciseChange(index, "exercise", e.target.value)}
-                              placeholder="e.g., Bench Press, Squat, etc."
-                              required
+                            <ExerciseSelectDropdown
+                              selectedExerciseName={exercise.exercise}
+                              onExerciseSelect={(selectedExerciseName) =>
+                                handleExerciseChange(index, "exercise", selectedExerciseName)
+                              }
                             />
                           </div>
 
