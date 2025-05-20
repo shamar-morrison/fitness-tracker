@@ -1,22 +1,24 @@
 "use client"
 
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { User, Menu } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Sidebar } from "./Sidebar"
 import { useAuth } from "@/contexts/AuthContext"
+import { Menu, Moon, Sun, User } from "lucide-react"
+import { useTheme } from "next-themes"
+import Link from "next/link"
+import { Sidebar } from "./Sidebar"
 
 export function Header() {
   const { user, signOut } = useAuth()
+  const { theme, setTheme } = useTheme()
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background">
@@ -37,39 +39,53 @@ export function Header() {
             <span className="text-xl font-bold">FitTrackr</span>
           </Link>
         </div>
-        <nav className="hidden md:flex md:gap-4 lg:gap-6">
-          <Link
-            href="/dashboard"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-          >
-            Dashboard
-          </Link>
-          <Link
-            href="/workouts"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-          >
-            Workouts
-          </Link>
-          <Link
-            href="/templates"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-          >
-            Templates
-          </Link>
-          <Link
-            href="/progress"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-          >
-            Progress
-          </Link>
-          <Link
-            href="/stats"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-          >
-            Statistics
-          </Link>
-        </nav>
+        {user && (
+          <nav className="hidden md:flex md:gap-4 lg:gap-6">
+            <Link
+              href="/dashboard"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/workouts"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              Workouts
+            </Link>
+            <Link
+              href="/templates"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              Templates
+            </Link>
+            <Link
+              href="/progress"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              Progress
+            </Link>
+            <Link
+              href="/stats"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              Statistics
+            </Link>
+          </nav>
+        )}
         <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            aria-label="Toggle theme"
+          >
+            {theme === "light" ? (
+              <Moon className="h-5 w-5" />
+            ) : (
+              <Sun className="h-5 w-5" />
+            )}
+          </Button>
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -88,9 +104,14 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button asChild>
-              <Link href="/auth/login">Sign in</Link>
-            </Button>
+            <>
+              <Button asChild variant="outline">
+                <Link href="/auth/signup">Sign Up</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/auth/login">Sign In</Link>
+              </Button>
+            </>
           )}
         </div>
       </div>

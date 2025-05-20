@@ -2,8 +2,8 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts"
 import type { WorkoutFrequency } from "@/hooks/useWorkoutStats"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 interface WorkoutFrequencyChartProps {
   workoutFrequency: WorkoutFrequency[]
@@ -46,7 +46,7 @@ export function WorkoutFrequencyChart({ workoutFrequency, isLoading }: WorkoutFr
         <CardDescription>Number of workouts logged per day</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="h-80">
+        <div>
           <ChartContainer
             config={{
               count: {
@@ -54,38 +54,32 @@ export function WorkoutFrequencyChart({ workoutFrequency, isLoading }: WorkoutFr
                 color: "hsl(var(--chart-2))",
               },
             }}
-            className="h-full"
           >
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={workoutFrequency}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            <BarChart
+              data={workoutFrequency}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="formattedDate" tick={{ fontSize: 12 }} tickMargin={10} minTickGap={10} />
+              <YAxis allowDecimals={false} />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    labelFormatter={(value) => value}
+                    formatter={(value) => `${value} workout${value !== 1 ? "s" : ""}`}
+                  />
+                }
+              />
+              <Bar
+                dataKey="count"
+                fill="var(--color-count)"
+                radius={[4, 4, 0, 0]}
+                isAnimationActive={true}
                 animationBegin={0}
-                animationDuration={1200}
-                animationEasing="ease-out"
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="formattedDate" tick={{ fontSize: 12 }} tickMargin={10} minTickGap={10} />
-                <YAxis allowDecimals={false} />
-                <ChartTooltip
-                  content={
-                    <ChartTooltipContent
-                      labelFormatter={(value) => value}
-                      formatter={(value) => `${value} workout${value !== 1 ? "s" : ""}`}
-                    />
-                  }
-                />
-                <Bar
-                  dataKey="count"
-                  fill="var(--color-count)"
-                  radius={[4, 4, 0, 0]}
-                  isAnimationActive={true}
-                  animationBegin={0}
-                  animationDuration={1500}
-                  animationEasing="ease-in-out"
-                />
-              </BarChart>
-            </ResponsiveContainer>
+                animationDuration={1500}
+                animationEasing="ease-in-out"
+              />
+            </BarChart>
           </ChartContainer>
         </div>
       </CardContent>

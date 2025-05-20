@@ -1,7 +1,7 @@
 import type React from "react"
-import { Header } from "@/components/layout/Header"
-import { Sidebar } from "@/components/layout/Sidebar"
+// import { Header } from "@/components/layout/Header"
 import { AuthWrapper } from "@/components/auth/AuthWrapper"
+import { Sidebar } from "@/components/layout/Sidebar"
 
 export default function ProtectedLayout({
   children,
@@ -11,7 +11,7 @@ export default function ProtectedLayout({
   return (
     <AuthWrapper>
       <div className="flex min-h-screen flex-col">
-        <Header />
+        {/* <Header /> */}
         <div className="flex flex-1">
           <aside className="hidden w-64 border-r md:block">
             <Sidebar />

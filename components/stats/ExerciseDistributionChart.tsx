@@ -1,14 +1,17 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Cell, Pie, PieChart, ResponsiveContainer, Legend } from "recharts"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import type { ExerciseDistribution } from "@/hooks/useWorkoutStats"
+import { Cell, Legend, Pie, PieChart } from "recharts"
 
 interface ExerciseDistributionChartProps {
   exerciseDistribution: ExerciseDistribution[]
   isLoading: boolean
 }
+
+// editor_note: Added a basic chartConfig, can be expanded if specific colors per slice are managed via config
+const chartConfig = {};
 
 export function ExerciseDistributionChart({ exerciseDistribution, isLoading }: ExerciseDistributionChartProps) {
   if (isLoading) {
@@ -74,8 +77,8 @@ export function ExerciseDistributionChart({ exerciseDistribution, isLoading }: E
         <CardDescription>Breakdown of exercises performed</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
+        <div>
+          <ChartContainer config={chartConfig}>
             <PieChart>
               <Pie
                 data={topExercises}
@@ -113,7 +116,7 @@ export function ExerciseDistributionChart({ exerciseDistribution, isLoading }: E
                 wrapperStyle={{ paddingTop: 20 }}
               />
             </PieChart>
-          </ResponsiveContainer>
+          </ChartContainer>
         </div>
       </CardContent>
     </Card>

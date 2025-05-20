@@ -2,8 +2,8 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Area, AreaChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts"
 import type { VolumeData } from "@/hooks/useWorkoutStats"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 interface VolumeChartProps {
   volumeData: VolumeData[]
@@ -46,7 +46,7 @@ export function VolumeChart({ volumeData, isLoading }: VolumeChartProps) {
         <CardDescription>Total volume (weight × sets × reps) per workout day</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="h-80">
+        <div>
           <ChartContainer
             config={{
               volume: {
@@ -54,40 +54,34 @@ export function VolumeChart({ volumeData, isLoading }: VolumeChartProps) {
                 color: "hsl(var(--chart-3))",
               },
             }}
-            className="h-full"
           >
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={volumeData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            <AreaChart
+              data={volumeData}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="formattedDate" tick={{ fontSize: 12 }} tickMargin={10} minTickGap={10} />
+              <YAxis />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    labelFormatter={(value) => value}
+                    formatter={(value) => `${value.toLocaleString()} lbs`}
+                  />
+                }
+              />
+              <Area
+                type="monotone"
+                dataKey="volume"
+                stroke="var(--color-volume)"
+                fill="var(--color-volume)"
+                fillOpacity={0.2}
+                isAnimationActive={true}
                 animationBegin={0}
-                animationDuration={1300}
-                animationEasing="ease-out"
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="formattedDate" tick={{ fontSize: 12 }} tickMargin={10} minTickGap={10} />
-                <YAxis />
-                <ChartTooltip
-                  content={
-                    <ChartTooltipContent
-                      labelFormatter={(value) => value}
-                      formatter={(value) => `${value.toLocaleString()} lbs`}
-                    />
-                  }
-                />
-                <Area
-                  type="monotone"
-                  dataKey="volume"
-                  stroke="var(--color-volume)"
-                  fill="var(--color-volume)"
-                  fillOpacity={0.2}
-                  isAnimationActive={true}
-                  animationBegin={0}
-                  animationDuration={1500}
-                  animationEasing="ease-in-out"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+                animationDuration={1500}
+                animationEasing="ease-in-out"
+              />
+            </AreaChart>
           </ChartContainer>
         </div>
       </CardContent>
