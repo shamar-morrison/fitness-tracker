@@ -1,13 +1,21 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useExercises } from "@/hooks/useExercises"
 import type { Exercise } from "@/lib/supabase/types"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { SubmitHandler, useForm } from "react-hook-form"
+import { useForm, type ControllerRenderProps, type FieldErrors, type SubmitHandler } from "react-hook-form"
 import { toast } from "sonner"
 import * as z from "zod"
 
@@ -26,73 +34,123 @@ interface CreateExerciseFormProps {
 }
 
 export function CreateExerciseForm({ onExerciseCreated, setOpen }: CreateExerciseFormProps) {
-  const { createExercise, loading: creatingExercise } = useExercises()
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<ExerciseFormValues>({
+  const { createExercise, createLoading } = useExercises()
+  
+  const form = useForm<ExerciseFormValues>({
     resolver: zodResolver(exerciseSchema),
+    defaultValues: {
+      name: "",
+      category: "",
+      description: "",
+      target_muscle_groups: "",
+    },
   })
 
-  const onSubmit: SubmitHandler<ExerciseFormValues> = async (data: ExerciseFormValues) => {
+  const onValidSubmit: SubmitHandler<ExerciseFormValues> = async (data: ExerciseFormValues) => {
     const muscleGroupsArray = data.target_muscle_groups
       ? data.target_muscle_groups.split(",").map((s: string) => s.trim()).filter((s: string) => s)
       : []
 
-    const newExercise = await createExercise({
+    const newExerciseData = {
       name: data.name,
       category: data.category,
       description: data.description || null,
       target_muscle_groups: muscleGroupsArray.length > 0 ? muscleGroupsArray : null,
-    })
+    }
+
+    const newExercise = await createExercise(newExerciseData)
 
     if (newExercise) {
       toast.success("Exercise Created", {
         description: `${newExercise.name} has been added to your exercises.`,
       })
-      reset()
+      form.reset()
       if (onExerciseCreated) {
         onExerciseCreated(newExercise)
       }
       if (setOpen) {
-        setOpen(false) // Close dialog if setOpen is provided
+        setOpen(false)
       }
     } else {
-      toast.error("Error", {
-        description: "Failed to create exercise. Please try again.",
+      toast.error("Error Creating Exercise", {
+        description: "Failed to create exercise. Please ensure all required fields are correctly filled and try again.",
       })
     }
   }
 
+  const onInvalidSubmit = async (errors: FieldErrors<ExerciseFormValues>) => {
+    toast.error("Invalid Form Data", {
+      description: "Please correct the errors highlighted below before submitting.",
+    })
+    // console.log("Form validation failed:", errors); 
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <Label htmlFor="name">Exercise Name</Label>
-        <Input id="name" {...register("name")} placeholder="e.g., Bench Press, Morning Run" />
-        {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
-      </div>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onValidSubmit, onInvalidSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }: { field: ControllerRenderProps<ExerciseFormValues, "name"> }) => (
+            <FormItem>
+              <FormLabel>Exercise Name</FormLabel>
+              <FormControl>
+                <Input placeholder="e.g., Bench Press, Morning Run" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <div>
-        <Label htmlFor="category">Category</Label>
-        <Input id="category" {...register("category")} placeholder="e.g., Chest, Cardio, Legs" />
-        {errors.category && <p className="text-sm text-red-500">{errors.category.message}</p>}
-      </div>
+        <FormField
+          control={form.control}
+          name="category"
+          render={({ field }: { field: ControllerRenderProps<ExerciseFormValues, "category"> }) => (
+            <FormItem>
+              <FormLabel>Category</FormLabel>
+              <FormControl>
+                <Input placeholder="e.g., Chest, Cardio, Legs" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <div>
-        <Label htmlFor="description">Description (Optional)</Label>
-        <Textarea id="description" {...register("description")} placeholder="Briefly describe the exercise" />
-      </div>
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }: { field: ControllerRenderProps<ExerciseFormValues, "description"> }) => (
+            <FormItem>
+              <FormLabel>Description (Optional)</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Briefly describe the exercise" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <div>
-        <Label htmlFor="target_muscle_groups">Target Muscle Groups (Optional, comma-separated)</Label>
-        <Input id="target_muscle_groups" {...register("target_muscle_groups")} placeholder="e.g., Pectorals, Deltoids, Triceps" />
-      </div>
+        <FormField
+          control={form.control}
+          name="target_muscle_groups"
+          render={({ field }: { field: ControllerRenderProps<ExerciseFormValues, "target_muscle_groups"> }) => (
+            <FormItem>
+              <FormLabel>Target Muscle Groups (Optional, comma-separated)</FormLabel>
+              <FormControl>
+                <Input placeholder="e.g., Pectorals, Deltoids, Triceps" {...field} />
+              </FormControl>
+              <FormDescription>
+                Enter muscle groups separated by commas.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <Button type="submit" disabled={creatingExercise}>
-        {creatingExercise ? "Creating..." : "Create Exercise"}
-      </Button>
-    </form>
+        <Button type="submit" disabled={createLoading || form.formState.isSubmitting}>
+          {createLoading || form.formState.isSubmitting ? "Creating..." : "Create Exercise"}
+        </Button>
+      </form>
+    </Form>
   )
 } 

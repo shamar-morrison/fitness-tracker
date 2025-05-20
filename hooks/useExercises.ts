@@ -12,7 +12,8 @@ export interface CategorizedExercise {
 
 export function useExercises() {
   const { user } = useAuth()
-  const [loading, setLoading] = useState(false)
+  const [fetchLoading, setFetchLoading] = useState(false)
+  const [createLoading, setCreateLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [allExercises, setAllExercises] = useState<Exercise[]>([])
   const [categorizedExercises, setCategorizedExercises] = useState<CategorizedExercise[]>([])
@@ -20,7 +21,7 @@ export function useExercises() {
   const fetchExercises = useCallback(async () => {
     if (!user) return
 
-    setLoading(true)
+    setFetchLoading(true)
     setError(null)
     try {
       // RLS policies will ensure only preset and user's own custom exercises are fetched.
@@ -36,7 +37,7 @@ export function useExercises() {
       setError(err.message)
       setAllExercises([])
     } finally {
-      setLoading(false)
+      setFetchLoading(false)
     }
   }, [user])
 
@@ -73,7 +74,7 @@ export function useExercises() {
         return null
       }
 
-      setLoading(true)
+      setCreateLoading(true)
       setError(null)
       try {
         const { data, error: insertError } = await supabaseClient
@@ -95,14 +96,15 @@ export function useExercises() {
         setError(err.message)
         return null
       } finally {
-        setLoading(false)
+        setCreateLoading(false)
       }
     },
     [user, fetchExercises]
   )
 
   return {
-    loading,
+    fetchLoading,
+    createLoading,
     error,
     allExercises,
     categorizedExercises,
