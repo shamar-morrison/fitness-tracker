@@ -1,21 +1,42 @@
 "use client"
 
-import type React from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import * as z from "zod"
 
 import { ExerciseSelectDropdown } from "@/components/exercises/ExerciseSelectDropdown"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useAuth } from "@/hooks/useAuth"
 import { useTemplates } from "@/hooks/useTemplates"
 import { useWorkouts } from "@/hooks/useWorkouts"
-import type { TemplateExercise, WorkoutInsert, WorkoutUpdate } from "@/lib/supabase/types"
+import type { TemplateExercise, WorkoutUpdate } from "@/lib/supabase/types"
 import { formatDateForInput } from "@/lib/utils/date-utils"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+
+const workoutSchema = z.object({
+  date: z.string().min(1, "Date is required."),
+  exercise: z.string().trim().min(1, "Exercise is required."),
+  sets: z.coerce.number().min(1, "Sets must be at least 1."),
+  reps: z.coerce.number().min(1, "Reps must be at least 1."),
+  weight: z.coerce.number().min(0, "Weight cannot be negative."),
+  notes: z.string(),
+})
+
+export type WorkoutFormValues = z.infer<typeof workoutSchema>
 
 interface WorkoutFormProps {
   workout?: WorkoutUpdate & { id: string }
@@ -24,88 +45,84 @@ interface WorkoutFormProps {
 
 export function WorkoutForm({ workout, onSuccess }: WorkoutFormProps) {
   const { user } = useAuth()
-  const { createWorkout, updateWorkout, loading, error } = useWorkouts()
+  const { createWorkout, updateWorkout, loading: submissionLoading, error: submissionApiError } = useWorkouts()
   const { getTemplate } = useTemplates()
   const router = useRouter()
   const searchParams = useSearchParams()
   const templateId = searchParams.get("template")
 
-  const [formData, setFormData] = useState<Partial<WorkoutInsert>>({
-    date: workout?.date || formatDateForInput(new Date()),
-    exercise: workout?.exercise || "",
-    sets: workout?.sets || 3,
-    reps: workout?.reps || 10,
-    weight: workout?.weight || 0,
-    notes: workout?.notes || "",
+  const form = useForm<WorkoutFormValues>({
+    resolver: zodResolver(workoutSchema),
+    defaultValues: {
+      date: workout?.date || formatDateForInput(new Date()),
+      exercise: workout?.exercise || "",
+      sets: workout?.sets || 3,
+      reps: workout?.reps || 10,
+      weight: workout?.weight || 0,
+      notes: workout?.notes || "",
+    },
   })
 
   const [templateLoading, setTemplateLoading] = useState(false)
 
   useEffect(() => {
     const loadTemplate = async () => {
-      if (templateId && user) {
+      if (templateId && user && !workout?.id) {
         setTemplateLoading(true)
-        const template = await getTemplate(templateId)
-
-        if (template) {
-          // If it's a new workout from a template, we'll use the first exercise
-          // from the template to populate the form
-          const exercises = template.exercises as unknown as TemplateExercise[]
-          if (exercises && exercises.length > 0) {
-            const firstExercise = exercises[0]
-            setFormData((prev) => ({
-              ...prev,
-              exercise: firstExercise.exercise,
-              sets: firstExercise.sets,
-              reps: firstExercise.reps,
-              weight: firstExercise.weight,
-              notes: firstExercise.notes || "",
-            }))
+        try {
+          const template = await getTemplate(templateId)
+          if (template) {
+            const exercises = template.exercises as unknown as TemplateExercise[]
+            if (exercises && exercises.length > 0) {
+              const firstExercise = exercises[0]
+              form.reset({
+                date: form.getValues("date"),
+                exercise: firstExercise.exercise,
+                sets: firstExercise.sets,
+                reps: firstExercise.reps,
+                weight: firstExercise.weight,
+                notes: firstExercise.notes || "",
+              })
+            }
           }
+        } catch (e) {
+          console.error("Failed to load template:", e)
+          toast.error("Failed to load template", { description: e instanceof Error ? e.message : "Unknown error" })
+        } finally {
+          setTemplateLoading(false)
         }
-        setTemplateLoading(false)
       }
     }
 
-    loadTemplate()
-  }, [templateId, user, getTemplate])
+    if (!form.formState.isDirty || !workout?.id) {
+      loadTemplate()
+    }
+  }, [templateId, user, getTemplate, form, workout?.id])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        name === "sets" || name === "reps" || name === "weight" ? (value === "" ? 0 : Number.parseFloat(value)) : value,
-    }))
-  }
-
-  const handleExerciseSelect = (selectedExerciseName: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      exercise: selectedExerciseName,
-    }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!user) return
+  const processSubmit = async (data: WorkoutFormValues) => {
+    if (!user) {
+      toast.error("You must be logged in to save a workout.")
+      return
+    }
 
     try {
+      let result
       if (workout?.id) {
-        const result = await updateWorkout(workout.id, formData as WorkoutUpdate)
-        if (!result) {
-          throw new Error("Failed to update workout")
-        }
+        result = await updateWorkout(workout.id, data)
       } else {
-        const result = await createWorkout({
-          ...(formData as WorkoutInsert),
+        result = await createWorkout({
+          ...data,
           user_id: user.id,
         })
-        if (!result) {
-          throw new Error("Failed to create workout")
-        }
       }
+
+      if (!result) {
+        throw new Error(workout?.id ? "Failed to update workout." : "Failed to create workout.")
+      }
+      
+      toast.success(workout?.id ? "Workout Updated!" : "Workout Added!", {
+        description: `Your workout for ${data.exercise} on ${data.date} has been saved.`,
+      })
 
       if (onSuccess) {
         onSuccess()
@@ -115,6 +132,8 @@ export function WorkoutForm({ workout, onSuccess }: WorkoutFormProps) {
       }
     } catch (err) {
       console.error("Error saving workout:", err)
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred."
+      toast.error("Error Saving Workout", { description: errorMessage })
     }
   }
 
@@ -131,91 +150,123 @@ export function WorkoutForm({ workout, onSuccess }: WorkoutFormProps) {
       <CardHeader>
         <CardTitle>{workout ? "Edit Workout" : "Add Workout"}</CardTitle>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(processSubmit)} className="space-y-0">
+          <CardContent className="space-y-4">
+            {submissionApiError && (
+              <Alert variant="destructive">
+                <AlertDescription>{submissionApiError}</AlertDescription>
+              </Alert>
+            )}
 
-          <div className="space-y-2">
-            <Label htmlFor="date">Date</Label>
-            <Input id="date" name="date" type="date" value={formData.date} onChange={handleChange} required />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="exercise">Exercise</Label>
-            <ExerciseSelectDropdown
-              selectedExerciseName={formData.exercise}
-              onExerciseSelect={handleExerciseSelect}
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="sets">Sets</Label>
-              <Input
-                id="sets"
+            <FormField
+              control={form.control}
+              name="exercise"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Exercise</FormLabel>
+                  <FormControl>
+                    <ExerciseSelectDropdown
+                      selectedExerciseName={field.value}
+                      onExerciseSelect={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
                 name="sets"
-                type="number"
-                min="1"
-                value={formData.sets}
-                onChange={handleChange}
-                required
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sets</FormLabel>
+                    <FormControl>
+                      <Input type="number" min="1" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="reps">Reps</Label>
-              <Input
-                id="reps"
+              <FormField
+                control={form.control}
                 name="reps"
-                type="number"
-                min="1"
-                value={formData.reps}
-                onChange={handleChange}
-                required
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Reps</FormLabel>
+                    <FormControl>
+                      <Input type="number" min="1" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="weight">Weight (lbs)</Label>
-              <Input
-                id="weight"
+              <FormField
+                control={form.control}
                 name="weight"
-                type="number"
-                min="0"
-                step="0.5"
-                value={formData.weight}
-                onChange={handleChange}
-                required
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Weight (lbs)</FormLabel>
+                    <FormControl>
+                      <Input type="number" min="0" step="0.5" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="notes">Notes</Label>
-            <Textarea
-              id="notes"
+            <FormField
+              control={form.control}
               name="notes"
-              value={formData.notes || ""}
-              onChange={handleChange}
-              placeholder="Any additional notes about this workout..."
-              rows={3}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Notes</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Any additional notes about this workout..."
+                      rows={3}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-        </CardContent>
+          </CardContent>
 
-        <CardFooter className="flex justify-between">
-          <Button type="button" variant="outline" onClick={() => router.back()}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={loading}>
-            {loading ? "Saving..." : workout ? "Update Workout" : "Add Workout"}
-          </Button>
-        </CardFooter>
-      </form>
+          <CardFooter className="flex justify-between pt-4">
+            <Button type="button" variant="outline" onClick={() => router.back()}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={submissionLoading || form.formState.isSubmitting}>
+              {submissionLoading || form.formState.isSubmitting
+                ? "Saving..."
+                : workout
+                ? "Update Workout"
+                : "Add Workout"}
+            </Button>
+          </CardFooter>
+        </form>
+      </Form>
     </Card>
   )
 }
