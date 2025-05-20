@@ -55,12 +55,7 @@ export function Sidebar() {
 
   return (
     <div className="flex h-full flex-col gap-2 p-4">
-      <div className="flex h-14 items-center border-b px-4 py-2">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold">FitTrackr</span>
-        </Link>
-      </div>
-      <div className="flex-1 py-2">
+      <div className="flex-1 py-1">
         {user && routesToShow.length > 0 && (
           <nav className="grid gap-1">
             {routesToShow.map((route) => (
