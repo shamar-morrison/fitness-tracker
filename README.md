@@ -11,6 +11,7 @@ FitTrackr is a web application designed to help users track their fitness journe
 - [Building the Project](#building-the-project)
 - [Available Scripts](#available-scripts)
 - [Technologies Used](#technologies-used)
+- [Database Setup](#database-setup)
 
 ## Prerequisites
 
@@ -72,6 +73,23 @@ POSTGRES_URL_NON_POOLING="your_postgres_non_pooling_connection_string_here" # Al
 - Always replace placeholder values with your actual credentials.
 - **Never commit your `.env.local` file or files containing sensitive keys (like `SUPABASE_SERVICE_ROLE_KEY` or database passwords) to your Git repository.** Ensure `.env.local` is listed in your `.gitignore` file.
 - For production deployments, use your hosting provider's system for managing environment variables securely.
+
+## Database Setup
+
+For the application to function correctly, you need to set up the database schema in your Supabase project.
+
+1.  **Navigate to the SQL Editor** in your Supabase project dashboard.
+2.  **Open the `new_exercises_table.sql` file** located in the root of this repository.
+3.  **Copy the entire content** of this SQL file.
+4.  **Paste it into the Supabase SQL Editor and run the query.**
+
+This script will:
+_ Create the `exercises` table with the required columns and constraints.
+_ Set up Row Level Security (RLS) policies for data access.
+_ Create a trigger to automatically update modification timestamps.
+_ Insert some preset exercises into the table.
+
+**Note:** If your project uses other database tables, functions, or triggers, ensure you have the corresponding SQL scripts and run them in your Supabase SQL Editor as well. The `new_exercises_table.sql` file only covers the schema for exercises.
 
 ## Running the Project
 
