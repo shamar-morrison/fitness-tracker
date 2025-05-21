@@ -1,8 +1,8 @@
 'use client';
 
-import { ChartContainer, type ChartConfig } from '@/components/ui/chart';
+import { type ChartConfig, ChartContainer } from '@/components/ui/chart';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useWorkoutStats, type TimeRange } from '@/hooks/useWorkoutStats';
+import { type TimeRange, useWorkoutStats } from '@/hooks/useWorkoutStats';
 import { useEffect } from 'react';
 import { ExerciseDistributionChart } from './ExerciseDistributionChart';
 import { ExerciseProgressChart } from './ExerciseProgressChart';
@@ -12,7 +12,7 @@ import { WorkoutFrequencyChart } from './WorkoutFrequencyChart';
 
 // Placeholder chartConfig - populate this with actual configuration
 const chartConfig = {
-  // Example (you will need to define these based on your data keys):
+  // Example (define these based on data keys):
   // volume: {
   //   label: "Volume (lbs)",
   //   color: "hsl(var(--chart-1))",

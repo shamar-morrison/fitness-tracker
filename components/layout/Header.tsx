@@ -14,65 +14,38 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Menu, Moon, Sun, User } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
+import { useState } from 'react';
 import { Sidebar } from './Sidebar';
 
 export function Header() {
   const { user, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background">
       <div className="container flex h-16 items-center justify-between py-4">
         <div className="flex items-center gap-2 md:gap-4">
-          <Sheet>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                onClick={() => setIsSheetOpen(true)}
+              >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[240px] sm:w-[300px]">
-              <Sidebar />
+              <Sidebar setIsSheetOpen={setIsSheetOpen} />
             </SheetContent>
           </Sheet>
           <Link href="/" className="flex items-center gap-2">
             <span className="text-xl font-bold">FitTrackr</span>
           </Link>
         </div>
-        {user && (
-          <nav className="hidden md:flex md:gap-4 lg:gap-6">
-            <Link
-              href="/dashboard"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/workouts"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              Workouts
-            </Link>
-            <Link
-              href="/templates"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              Templates
-            </Link>
-            <Link
-              href="/progress"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              Progress
-            </Link>
-            <Link
-              href="/stats"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              Statistics
-            </Link>
-          </nav>
-        )}
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
@@ -100,6 +73,9 @@ export function Header() {
                 <DropdownMenuItem asChild>
                   <Link href="/profile">Profile</Link>
                 </DropdownMenuItem>
+                {/*<DropdownMenuItem asChild>*/}
+                {/*  <Link href="/dashboard">Dashboard</Link>*/}
+                {/*</DropdownMenuItem>*/}
                 <DropdownMenuItem onClick={() => signOut()}>
                   Sign out
                 </DropdownMenuItem>

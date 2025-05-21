@@ -14,7 +14,11 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export function Sidebar() {
+interface SidebarProps {
+  setIsSheetOpen?: (isOpen: boolean) => void;
+}
+
+export function Sidebar({ setIsSheetOpen }: SidebarProps) {
   const pathname = usePathname();
   const { user } = useAuth();
 
@@ -70,7 +74,7 @@ export function Sidebar() {
                 )}
                 asChild
               >
-                <Link href={route.href}>
+                <Link href={route.href} onClick={() => setIsSheetOpen?.(false)}>
                   <route.icon className="h-4 w-4" />
                   {route.label}
                 </Link>
