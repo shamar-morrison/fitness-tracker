@@ -1,31 +1,25 @@
 'use client';
 
 import type React from 'react';
+import { useState } from 'react';
 
 import { ExerciseSelectDropdown } from '@/components/exercises/ExerciseSelectDropdown';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks/useAuth';
 import { useTemplates } from '@/hooks/useTemplates';
 import type {
-    Json,
-    TemplateExercise,
-    WorkoutTemplateInsert,
-    WorkoutTemplateUpdate,
+  Json,
+  TemplateExercise,
+  WorkoutTemplateInsert,
+  WorkoutTemplateUpdate,
 } from '@/lib/supabase/types';
 import { Plus, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
 interface TemplateFormProps {
   template?: WorkoutTemplateUpdate & {
@@ -141,11 +135,8 @@ export function TemplateForm({ template, onSuccess }: TemplateFormProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{template ? 'Edit Template' : 'Create Template'}</CardTitle>
-      </CardHeader>
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-7">
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
@@ -192,7 +183,8 @@ export function TemplateForm({ template, onSuccess }: TemplateFormProps) {
             {formData.exercises.length === 0 ? (
               <div className="rounded-md border border-dashed p-6 text-center">
                 <p className="text-sm text-muted-foreground">
-                  No exercises added yet. Click &quot;Add Exercise&quot; to begin.
+                  No exercises added yet. Click &quot;Add Exercise&quot; to
+                  begin.
                 </p>
               </div>
             ) : (

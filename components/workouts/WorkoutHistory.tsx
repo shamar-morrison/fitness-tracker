@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useWorkouts } from '@/hooks/useWorkouts';
 import { useAuth } from '@/hooks/useAuth';
@@ -12,7 +12,6 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
 import {
   Table,
@@ -78,12 +77,11 @@ export function WorkoutHistory() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Workout History</CardTitle>
-          <CardDescription>
+          <CardDescription className={'text-center pt-5'}>
             You haven&apos;t logged any workouts yet.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex justify-center py-6">
+        <CardContent className="flex justify-center pb-6">
           <Button asChild>
             <Link href="/workouts/new">Log Your First Workout</Link>
           </Button>
